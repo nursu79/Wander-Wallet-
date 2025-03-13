@@ -40,5 +40,17 @@ Core Functionalities & Business Logic
   When an expense is added, it is linked to a specific trip and stored in the database.
   The system dynamically updates the remaining budget and alerts the user if expenses exceed the allocated amount.
   Users can edit or delete expenses, ensuring accurate record-keeping.
+
+
+  | Names                         |     ID      |
+| ----------------------------- | ----------- |
+| Saba Habtamu                  | UGR/7546/15 |
+| Sumeya Ibrahim                | UGR/6702/15 |
+| Yabtesega Kinfe               | UGR/2887/15 |
+| Yunus Kedir                   | UGR/8173/13 |
+
+
+
+
   
 
