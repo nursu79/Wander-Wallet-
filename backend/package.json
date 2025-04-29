@@ -1,0 +1,27 @@
+{
+  "name": "wander_wallet",
+  "version": "1.0.0",
+  "description": "Express backend for the Wander wallet app",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "test": "mocha --recursive"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "chai": "^5.2.0",
+    "eslint": "^9.25.1",
+    "mocha": "^11.1.0",
+    "nodemon": "^3.1.10",
+    "sinon": "^20.0.0"
+  }
+}
