@@ -4,6 +4,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 import userRouter from "./routes/UserRouter.js";
+import prisma from "./dbClient.js";
 
 const app = express();
 app.use(express.json());
@@ -23,6 +24,15 @@ app.use(userRouter);
 
 app.get("/", (req, res) => {
     res.json({ message: "Hello World!" });
+})
+
+app.get("/deleteAll", async (req, res) => {
+    await prisma.expense.deleteMany({});
+    await prisma.refreshToken.deleteMany({})
+    await prisma.trip.deleteMany({});
+    await prisma.user.deleteMany({});
+
+    res.json({ message: "All data deleted" });
 })
 
 const port = process.env.PORT || 3000;

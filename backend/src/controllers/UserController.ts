@@ -1,8 +1,12 @@
 import { Request, Response } from "express";
 import bcrypt from "bcrypt"
 import prisma from "../dbClient.js";
-import { generateAccessToken, generateRefreshToken, verifyToken } from "../auth/jwt.js";
-import { User } from "@prisma/client";
+import { generateAccessToken, generateRefreshToken, verifyAccessToken, verifyRefreshToken } from "../auth/jwt.js";
+
+type JwtPayload = {
+    email: string;
+    username: string;
+}
 
 export default class UserController {
     static async createUser(req: Request, res: Response) {
@@ -140,9 +144,9 @@ export default class UserController {
             });
         }
 
-        const email = verifyToken(refreshToken) as string;
+        const user = verifyRefreshToken(refreshToken) as JwtPayload;
 
-        if (!email) {
+        if (!user) {
             return res.status(401).json({ 
                 error: { 
                     message: "Refresh token is expired or invalid" 
@@ -153,15 +157,10 @@ export default class UserController {
         const refreshTokenHashed = await bcrypt.hash(refreshToken, 10);
         const existingUser = await prisma.user.findUnique({
             where: {
-                email,
-                refreshTokens: {
-                    some: {
-                        token: refreshTokenHashed
-                    }
-                }
+                email: user.email
             }
         });
-        
+    
         if (!existingUser) {
             return res.status(401).json({ 
                 error: { 
@@ -169,10 +168,17 @@ export default class UserController {
                 } 
             });
         }
-
+    
+        const allUserTokens = await prisma.refreshToken.findMany({
+            where: {
+                userId: existingUser.id
+            }
+        });
+        const existingToken = allUserTokens.find(async token => await bcrypt.compare(refreshTokenHashed, token.token));
+        
         await prisma.refreshToken.delete({
             where: {
-                token: refreshTokenHashed
+                token: existingToken?.token
             }
         });
 
@@ -206,11 +212,11 @@ export default class UserController {
                 error: { 
                     message: "Access token is required"
                 }
-            })
+            });
         }
 
-        const email = verifyToken(accessToken) as string;
-        if (!email) {
+        const user = verifyAccessToken(accessToken) as JwtPayload;
+        if (!user) {
             return res.status(401).json({ 
                 error: { 
                     message: "Access token is expired or invalid" 
@@ -220,7 +226,10 @@ export default class UserController {
 
         const existingUser = await prisma.user.findUnique({
             where: {
-                email
+                email: user.email
+            },
+            include: {
+                refreshTokens: true
             },
             omit: {
                 password: true,

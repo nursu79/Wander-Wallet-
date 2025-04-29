@@ -5,8 +5,19 @@ const userRouter = express.Router();
 userRouter.use(express.json())
 
 userRouter.post("/register", (req, res) => {
-    console.log(req);
     UserController.createUser(req, res);
 });
+
+userRouter.post("/login", (req, res) => {
+    UserController.loginUser(req, res);
+});
+
+userRouter.post("/token", (req, res) => {
+    UserController.refreshToken(req, res);
+});
+
+userRouter.get("/profile", (req, res) => {
+    UserController.getProfile(req, res);
+})
 
 export default userRouter;
