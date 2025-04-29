@@ -4,6 +4,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 import userRouter from "./routes/UserRouter.js";
+import tripRouter from "./routes/TripRouter.js";
 import prisma from "./dbClient.js";
 
 const app = express();
@@ -21,6 +22,7 @@ const __dirname = path.dirname(__filename);
 app.use(express.static(path.join(__dirname, '../public')));
 
 app.use(userRouter);
+app.use(tripRouter);
 
 app.get("/", (req, res) => {
     res.json({ message: "Hello World!" });

@@ -31,8 +31,9 @@ model Trip {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   userId      String
-  user        User      @relation(fields: [userId], references: [id])
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   expenses    Expense[]
+  imgUrl      String?
 }
 
 model Expense {
@@ -44,7 +45,7 @@ model Expense {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   tripId    String
-  trip      Trip     @relation(fields: [tripId], references: [id])
+  trip      Trip     @relation(fields: [tripId], references: [id], onDelete: Cascade)
   notes     String?
 }
 
@@ -61,7 +62,7 @@ model RefreshToken {
   id        String   @id @default(cuid())
   token     String   @unique
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

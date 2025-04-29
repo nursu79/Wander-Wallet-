@@ -1,12 +1,7 @@
 import { Request, Response } from "express";
 import bcrypt from "bcrypt"
 import prisma from "../dbClient.js";
-import { generateAccessToken, generateRefreshToken, verifyAccessToken, verifyRefreshToken } from "../auth/jwt.js";
-
-type JwtPayload = {
-    email: string;
-    username: string;
-}
+import { generateAccessToken, generateRefreshToken, JwtPayload, verifyAccessToken, verifyRefreshToken } from "../auth/jwt.js";
 
 export default class UserController {
     static async createUser(req: Request, res: Response) {
@@ -216,6 +211,7 @@ export default class UserController {
         }
 
         const user = verifyAccessToken(accessToken) as JwtPayload;
+
         if (!user) {
             return res.status(401).json({ 
                 error: { 
@@ -227,9 +223,6 @@ export default class UserController {
         const existingUser = await prisma.user.findUnique({
             where: {
                 email: user.email
-            },
-            include: {
-                refreshTokens: true
             },
             omit: {
                 password: true,

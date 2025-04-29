@@ -1,13 +1,17 @@
 import jwt, { SignOptions } from "jsonwebtoken";
-import prisma from "../dbClient";
-import { PrismaClient, User } from "@prisma/client";
+import { User } from "@prisma/client";
+
+export type JwtPayload = {
+    id: string;
+    email: string;
+}
 
 const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET || "default";
 const refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET || "default";
 
 export const generateAccessToken = (user: User) => {
-    const payload = {
-        username: user.id,
+    const payload: JwtPayload = {
+        id: user.id,
         email: user.email,
     }
     const options: SignOptions = {
@@ -18,7 +22,7 @@ export const generateAccessToken = (user: User) => {
 }
 
 export const generateRefreshToken = (user: User) => {
-    const payload = {
+    const payload: JwtPayload = {
         id: user.id,
         email: user.email
     };
@@ -30,9 +34,24 @@ export const generateRefreshToken = (user: User) => {
 }
 
 export const verifyAccessToken = (token: string) => {
-    return jwt.verify(token, accessTokenSecret);
+    try {
+        return jwt.verify(token, accessTokenSecret) as JwtPayload;
+    } catch (e) {
+        if (e instanceof jwt.TokenExpiredError) {
+            return null;
+        }
+        throw e;
+    }
 }
 
 export const verifyRefreshToken = (token: string) => {
+    try {
+        return jwt.verify(token, refreshTokenSecret) as JwtPayload;
+    } catch (e) {
+        if (e instanceof jwt.TokenExpiredError) {
+            return null;
+        }
+        throw e;
+    }
     return jwt.verify(token, refreshTokenSecret);
 }
