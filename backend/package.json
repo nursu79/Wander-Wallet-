@@ -1,11 +1,11 @@
 {
-  "name": "wander_wallet",
+  "name": "backend",
   "version": "1.0.0",
-  "description": "Express backend for the Wander wallet app",
+  "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js",
+    "build": "npx tsc",
+    "start": "nodemon --exec node --loader ts-node/esm src/app.ts",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "test": "mocha --recursive"
@@ -14,14 +14,20 @@
   "author": "",
   "license": "ISC",
   "type": "module",
-  "dependencies": {
-    "express": "^5.1.0"
-  },
   "devDependencies": {
+    "@types/express": "^5.0.1",
+    "@types/node": "^22.15.3",
     "chai": "^5.2.0",
     "eslint": "^9.25.1",
     "mocha": "^11.1.0",
     "nodemon": "^3.1.10",
-    "sinon": "^20.0.0"
+    "sinon": "^20.0.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.6.0",
+    "express": "^5.1.0",
+    "prisma": "^6.6.0"
   }
 }

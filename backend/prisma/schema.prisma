@@ -1,0 +1,67 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String         @id @default(cuid())
+  username      String?
+  email         String?        @unique
+  password      String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  trips         Trip[]
+  refreshTokens RefreshToken[]
+}
+
+model Trip {
+  id          String    @id @default(cuid())
+  name        String
+  destination String
+  budget      Float
+  startDate   DateTime
+  endDate     DateTime
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  expenses    Expense[]
+}
+
+model Expense {
+  id        String   @id @default(cuid())
+  name      String
+  amount    Float
+  category  Category @default(OTHER)
+  date      DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  tripId    String
+  trip      Trip     @relation(fields: [tripId], references: [id])
+  notes     String?
+}
+
+enum Category {
+  FOOD
+  TRANSPORTATION
+  ACCOMMODATION
+  ENTERTAINMENT
+  SHOPPING
+  OTHER
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
