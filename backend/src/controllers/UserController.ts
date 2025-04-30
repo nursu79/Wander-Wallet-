@@ -6,6 +6,7 @@ import { generateAccessToken, generateRefreshToken, JwtPayload, verifyAccessToke
 export default class UserController {
     static async createUser(req: Request, res: Response) {
         const { username, email, password } = req.body || {};
+        const avatarUrl = req.file?.filename || null;
 
         if (!username || !email || !password) {
             return res.status(400).json({ 
@@ -36,7 +37,8 @@ export default class UserController {
             data: {
                 username,
                 email,
-                password: hashedPassword
+                password: hashedPassword,
+                avatarUrl
             }
         });
 

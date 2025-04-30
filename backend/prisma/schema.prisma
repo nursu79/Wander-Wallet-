@@ -19,6 +19,7 @@ model User {
   updatedAt     DateTime       @updatedAt
   trips         Trip[]
   refreshTokens RefreshToken[]
+  avatarUrl     String?
 }
 
 model Trip {
