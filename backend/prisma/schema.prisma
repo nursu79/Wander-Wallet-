@@ -67,3 +67,10 @@ model RefreshToken {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model BlackListToken {
+  id        String   @id @default(cuid())
+  accessToken     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

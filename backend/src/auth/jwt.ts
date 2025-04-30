@@ -15,7 +15,7 @@ export const generateAccessToken = (user: User) => {
         email: user.email,
     }
     const options: SignOptions = {
-        expiresIn: "15m"
+        expiresIn: "2h"
     }
 
     return jwt.sign(payload, accessTokenSecret, options)
@@ -37,7 +37,7 @@ export const verifyAccessToken = (token: string) => {
     try {
         return jwt.verify(token, accessTokenSecret) as JwtPayload;
     } catch (e) {
-        if (e instanceof jwt.TokenExpiredError) {
+        if (e instanceof jwt.JsonWebTokenError) {
             return null;
         }
         throw e;
@@ -48,10 +48,9 @@ export const verifyRefreshToken = (token: string) => {
     try {
         return jwt.verify(token, refreshTokenSecret) as JwtPayload;
     } catch (e) {
-        if (e instanceof jwt.TokenExpiredError) {
+        if (e instanceof jwt.JsonWebTokenError) {
             return null;
         }
         throw e;
     }
-    return jwt.verify(token, refreshTokenSecret);
 }

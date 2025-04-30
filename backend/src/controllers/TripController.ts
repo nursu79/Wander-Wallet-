@@ -8,49 +8,33 @@ export default class TripController {
     static async createTrip(req: Request, res: Response) {
         const { name, destination, budget, startDate, endDate } = req.body || {};
         const tripImage = req.file?.filename || null;
+        const budgetNumber = parseFloat(budget);
+        const startDateDate = new Date(startDate);
+        const endDateDate = new Date(endDate);
 
-        if (!name || !destination || !budget || !startDate || !endDate) {
+        if (!name || !destination || !budget || isNaN(budgetNumber) || budgetNumber <= 0 || !startDate || isNaN(startDateDate.getTime()) || !endDate || isNaN(endDateDate.getTime()) || startDateDate > endDateDate) {
+            if (tripImage) {
+                try {
+                    fs.rm(path.join("public", "tripImages", tripImage), (err) => {
+                        if (err) {
+                            throw err;
+                        }
+                    });
+                } catch (e) {
+                    return res.status(500).json({
+                        error: {
+                            message: "An unexpected error occured"
+                        }
+                    })
+                }
+            }
             return res.status(400).json({
                 error: {
                     name: !name ? "Name is required" : undefined,
                     destination: !destination ? "Destination is required" : undefined,
-                    budget: !budget ? "Budget is required" : undefined,
-                    startDate: !startDate ? "Start date is required" : undefined,
-                    endDate: !endDate ? "End date is required" : undefined
-                }
-            });
-        }
-        const budgetNumber = parseFloat(budget);
-        if (isNaN(budgetNumber) || budgetNumber <= 0) {
-            return res.status(400).json({
-                error: {
-                    budget: "Budget must be a positive number"
-                }
-            });
-        }
-        const startDateDate = new Date(startDate);
-        const endDateDate = new Date(endDate);
-
-        if (isNaN(startDateDate.getTime())) {
-            return res.status(400).json({
-                error: {
-                    startDate: "Start date is not a valid date"
-                }
-            });
-        }
-        if (isNaN(endDateDate.getTime())) {
-            return res.status(400).json({
-                error: {
-                    endDate: "End date is not a valid date"
-                }
-            });
-        }
-
-        if (startDateDate > endDateDate) {
-            return res.status(400).json({
-                error: {
-                    startDate: "Start date must be before end date",
-                    endDate: "End date must be after start date"
+                    budget: !budget ? "Budget is required" : (isNaN(budgetNumber) || budgetNumber <= 0 ? "Budget must be a positive number" : undefined),
+                    startDate: !startDate ? "Start date is required" : (isNaN(startDateDate.getTime()) ? "Start date is not a valid date" : (startDateDate > endDateDate ? "Start date must be before end date" : undefined)),
+                    endDate: !endDate ? "End date is required" : (isNaN(endDateDate.getTime()) ? "End date is not a valid date" : (startDateDate > endDateDate ? "End date must be after start date" : undefined)),
                 }
             });
         }
@@ -81,6 +65,21 @@ export default class TripController {
             });
         }
 
+        if (tripImage) {
+            try {
+                fs.rm(path.join("public", "tripImages", tripImage), (err) => {
+                    if (err) {
+                        throw err;
+                    }
+                });
+            } catch (e) {
+                return res.status(500).json({
+                    error: {
+                        message: "An unexpected error occured"
+                    }
+                })
+            }
+        }
         return res.status(500).json({
             error: {
                 message: "An error occurred while creating the trip"
@@ -109,6 +108,75 @@ export default class TripController {
                 message: "An error occurred while fetching the trips"
             }
         });
+    }
+
+    static async getPendingTrips(req: Request, res: Response) {
+        const user = getUser(req);
+        if (user) {
+            const trips = await prisma.trip.findMany({
+                where: {
+                    userId: user.id,
+                    startDate: {
+                        gt: new Date()
+                    }
+                }
+            });
+
+            return res.status(200).json({
+                payload: {
+                    trips
+                }
+            });
+        }
+
+        return res.status(500).json({
+            error: {
+                message: "An error occurred while fetching the trips"
+            }
+        });
+    }
+
+    static async getCurrentTrips(req: Request, res: Response) {
+        const user = getUser(req);
+        if (user) {
+            const trips = await prisma.trip.findMany({
+                where: {
+                    userId: user.id,
+                    startDate: {
+                        lte: new Date()
+                    },
+                    endDate: {
+                        gt: new Date()
+                    }
+                }
+            });
+
+            return res.status(200).json({
+                payload: {
+                    trips
+                }
+            });
+        }
+    }
+
+    static async getPastTrips(req: Request, res: Response) {
+        const user = getUser(req);
+        if (user) {
+            const trips = await prisma.trip.findMany({
+                where: {
+                    userId: user.id,
+                    endDate: {
+                        lt: new Date()
+                    }
+                }
+            });
+
+            return res.status(200).json({
+                payload: {
+                    trips
+                }
+            });
+        }
     }
 
     static async getTrip(req: Request, res: Response) {
@@ -175,29 +243,133 @@ export default class TripController {
         }
         
         try {
-            const filePath = path.join("public", trip.imgUrl || "");
-            fs.rm(path.join("public", trip.imgUrl || ""), {force: true}, (err) => {
-                if (err) {
-                    throw err;
-                }
-            })
+            const tripImgUrl = trip.imgUrl;
+
             await prisma.trip.delete({
                 where: {
                     id: trip.id
                 }
             });
 
+            if (tripImgUrl) {
+                fs.rm(path.join("public", "tripImages", tripImgUrl), {force: true}, (err) => {
+                    if (err) {
+                        throw err;
+                    }
+                });
+            }
+
             return res.json({
                 payload: {
                     message: "Trip deleted successfully"
                 }
-            })
+            });
         } catch (e) {
             return res.status(500).json({
                 error: {
                     message: "An error occurred while deleting the trip"
                 }
             });
+        }
+    }
+
+    static async updateTrip(req: Request, res: Response) {
+        const user = getUser(req);
+        const { id } = req.params || {};
+        const { name, destination, budget, startDate, endDate } = req.body || {};
+        const tripImage = req.file?.filename;
+        const budgetNumber = parseFloat(budget);
+        const startDateDate = new Date(startDate);
+        const endDateDate = new Date(endDate);
+
+        if (!name || !destination || !budget || isNaN(budgetNumber) || budgetNumber <= 0 || !startDate || isNaN(startDateDate.getTime()) || !endDate || isNaN(endDateDate.getTime()) || startDateDate > endDateDate) {
+            if (tripImage) {
+                try {
+                    fs.rm(path.join("public", "tripImages", tripImage), (err) => {
+                        if (err) {
+                            throw err;
+                        }
+                    });
+                } catch (e) {
+                    return res.status(500).json({
+                        error: {
+                            message: "An unexpected error occured"
+                        }
+                    })
+                }
+            }
+            return res.status(400).json({
+                error: {
+                    name: !name ? "Name is required" : undefined,
+                    destination: !destination ? "Destination is required" : undefined,
+                    budget: !budget ? "Budget is required" : (isNaN(budgetNumber) || budgetNumber <= 0 ? "Budget must be a positive number" : undefined),
+                    startDate: !startDate ? "Start date is required" : (isNaN(startDateDate.getTime()) ? "Start date is not a valid date" : (startDateDate > endDateDate ? "Start date must be before end date" : undefined)),
+                    endDate: !endDate ? "End date is required" : (isNaN(endDateDate.getTime()) ? "End date is not a valid date" : (startDateDate > endDateDate ? "End date must be after start date" : undefined)),
+                }
+            });
+        }
+
+        if (user) {
+            const existingTrip = await prisma.trip.findUnique({
+                where: {
+                    id,
+                    userId: user.id
+                }
+            });
+            const oldImageUrl = existingTrip?.imgUrl;
+        
+            try {
+                const updatedTrip = await prisma.trip.update({
+                    where: {
+                        id,
+                        userId: user.id
+                    },
+                    data: {
+                        name,
+                        destination,
+                        budget: budgetNumber,
+                        startDate: startDateDate,
+                        endDate: endDateDate,
+                        imgUrl: tripImage || existingTrip?.imgUrl
+                    }
+                });
+
+                if (tripImage && oldImageUrl) {
+                    fs.rm(path.join("public", "tripImages", oldImageUrl), {force: true}, (err) => {
+                        if (err) {
+                            throw err;
+                        }
+                    });
+                }
+
+                return res.status(200).json({
+                    payload: {
+                        trip: updatedTrip
+                    }
+                })
+            }
+            catch (e) {
+                if (tripImage) {
+                    try {
+                        fs.rm(path.join("public", "tripImages", tripImage), (err) => {
+                            if (err) {
+                                throw err;
+                            }
+                        });
+                    } catch (e) {
+                        return res.status(500).json({
+                            error: {
+                                message: "An unexpected error occured"
+                            }
+                        })
+                    }
+                }
+                return res.status(400).json({
+                    error: {
+                        message: "Couldn't find trip"
+                    }
+                });
+            }
         }
     }
 }

@@ -6,6 +6,7 @@ import { fileURLToPath } from "url";
 import userRouter from "./routes/UserRouter.js";
 import tripRouter from "./routes/TripRouter.js";
 import prisma from "./dbClient.js";
+import expenseRouter from "./routes/ExpenseRouter.js";
 
 const app = express();
 app.use(express.json());
@@ -23,6 +24,7 @@ app.use(express.static(path.join(__dirname, '../public')));
 
 app.use(userRouter);
 app.use(tripRouter);
+app.use(expenseRouter);
 
 app.get("/", (req, res) => {
     res.json({ message: "Hello World!" });
@@ -30,7 +32,8 @@ app.get("/", (req, res) => {
 
 app.get("/deleteAll", async (req, res) => {
     await prisma.expense.deleteMany({});
-    await prisma.refreshToken.deleteMany({})
+    await prisma.refreshToken.deleteMany({});
+    await prisma.blackListToken.deleteMany({})
     await prisma.trip.deleteMany({});
     await prisma.user.deleteMany({});
 

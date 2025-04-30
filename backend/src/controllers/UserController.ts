@@ -2,6 +2,9 @@ import { Request, Response } from "express";
 import bcrypt from "bcrypt"
 import prisma from "../dbClient.js";
 import { generateAccessToken, generateRefreshToken, JwtPayload, verifyAccessToken, verifyRefreshToken } from "../auth/jwt.js";
+import { getAccessToken, getUser } from "../utils/index.js";
+import fs from "fs";
+import path from "path";
 
 export default class UserController {
     static async createUser(req: Request, res: Response) {
@@ -9,6 +12,25 @@ export default class UserController {
         const avatarUrl = req.file?.filename || null;
 
         if (!username || !email || !password) {
+            if (avatarUrl) {
+                try {
+                    fs.rm(path.join("public", "userAvatars", avatarUrl), (err) => {
+                        if (err) {
+                            return res.status(500).json({
+                                error: {
+                                    message: "An unknown error occured"
+                                }
+                            })
+                        }
+                    });
+                } catch (e) {
+                    return res.status(500).json({
+                        error: {
+                            message: "An unexpected error occured"
+                        }
+                    });
+                }
+            }
             return res.status(400).json({ 
                 error: {
                     username: !username ? "Username is required" : undefined,
@@ -25,6 +47,25 @@ export default class UserController {
         });
 
         if (existingUser) {
+            if (avatarUrl) {
+                try {
+                    fs.rm(path.join("public", "userAvatars", avatarUrl), (err) => {
+                        if (err) {
+                            return res.status(500).json({
+                                error: {
+                                    message: "An unknown error occured"
+                                }
+                            })
+                        }
+                    });
+                } catch (e) {
+                    return res.status(500).json({
+                        error: {
+                            message: "An unexpected error occured"
+                        }
+                    });
+                }
+            }
             return res.status(409).json({ 
                 error: {
                     email: "User already exists"
@@ -44,11 +85,10 @@ export default class UserController {
 
         const accessToken = generateAccessToken(newUser);
         const refreshToken = generateRefreshToken(newUser);
-        const refreshTokenHashed = await bcrypt.hash(refreshToken, 10);
 
         await prisma.refreshToken.create({
             data: {
-                token: refreshTokenHashed,
+                token: refreshToken,
                 user: {
                     connect: {
                         id: newUser.id
@@ -109,11 +149,10 @@ export default class UserController {
 
         const accessToken = generateAccessToken(user);
         const refreshToken = generateRefreshToken(user);
-        const refreshTokenHashed = await bcrypt.hash(refreshToken, 10);
 
         await prisma.refreshToken.create({
             data: {
-                token: refreshTokenHashed,
+                token: refreshToken,
                 user: {
                     connect: {
                         id: user.id
@@ -151,7 +190,6 @@ export default class UserController {
             });
         }
 
-        const refreshTokenHashed = await bcrypt.hash(refreshToken, 10);
         const existingUser = await prisma.user.findUnique({
             where: {
                 email: user.email
@@ -171,21 +209,27 @@ export default class UserController {
                 userId: existingUser.id
             }
         });
-        const existingToken = allUserTokens.find(async token => await bcrypt.compare(refreshTokenHashed, token.token));
-        
-        await prisma.refreshToken.delete({
-            where: {
-                token: existingToken?.token
-            }
-        });
+        const existingToken = allUserTokens.find((token) => token.token === refreshToken);
+        try {
+            await prisma.refreshToken.delete({
+                where: {
+                    token: existingToken?.token
+                }
+            });
+        } catch (e) {
+            return res.status(404).json({
+                error: {
+                    message: "Couldn't find Refresh Token"
+                }
+            })
+        }
 
         const newAccessToken = generateAccessToken(existingUser);
         const newRefreshToken = generateRefreshToken(existingUser);
 
-        const newRefreshTokenHashed = await bcrypt.hash(newRefreshToken, 10);
         await prisma.refreshToken.create({
             data: {
-                token: newRefreshTokenHashed,
+                token: newRefreshToken,
                 user: {
                     connect: {
                         id: existingUser.id
@@ -242,6 +286,150 @@ export default class UserController {
         return res.status(200).json({
             payload: {
                 user: existingUser
+            }
+        });
+    }
+
+    static async updateProfile(req: Request, res: Response) {
+        const user = getUser(req);
+        const { username } = req.body || {};
+
+        const avatarUrl = req.file?.filename || null;
+
+        if (!username) {
+            if (avatarUrl) {
+                try {
+                    fs.rm(path.join("public", "userAvatars", avatarUrl), (err) => {
+                        if (err) {
+                            return res.status(500).json({
+                                error: {
+                                    message: "An unknown error occured"
+                                }
+                            })
+                        }
+                    });
+                } catch (e) {
+                    return res.status(500).json({
+                        error: {
+                            message: "An unexpected error occured"
+                        }
+                    });
+                }
+            }
+            return res.status(400).json({ 
+                error: {
+                    username: "Username is required",
+                }
+             });
+        }
+
+        const existingUser = await prisma.user.findUnique({
+            where: {
+                id: user?.id
+            }
+        });
+        const oldAvatarUrl = existingUser?.avatarUrl
+
+        try {
+            const updatedUser = await prisma.user.update({
+                where: {
+                    id: existingUser?.id
+                },
+                omit: {
+                    password: true
+                },
+                data: {
+                    username,
+                    avatarUrl: avatarUrl || existingUser?.avatarUrl
+                }
+            });
+
+            if (avatarUrl && oldAvatarUrl) {
+                fs.rm(path.join("public", "userAvatars", oldAvatarUrl), { force: true }, (err) => {
+                    if (err) {
+                        throw err;
+                    }
+                });
+            }
+
+            return res.status(200).json({
+                payload: {
+                    user: updatedUser
+                }
+            });
+        } catch (e) {
+            if (avatarUrl) {
+                try {
+                    fs.rm(path.join("public", "userAvatars", avatarUrl), (err) => {
+                        if (err) {
+                            return res.status(500).json({
+                                error: {
+                                    message: "An unknown error occured"
+                                }
+                            })
+                        }
+                    });
+                } catch (e) {
+                    return res.status(500).json({
+                        error: {
+                            message: "An unexpected error occured"
+                        }
+                    });
+                }
+            }
+            return res.status(500).json({
+                error: {
+                    message: "An unknown error occured"
+                }
+            });
+        }
+    }
+
+    static async logoutUser(req: Request, res: Response) {
+        const user = getUser(req);
+        const { refreshToken } = req.body || {};
+        const accessToken = getAccessToken(req);
+
+        if (!refreshToken || !accessToken) {
+            return res.status(400).json({
+                error: {
+                    accessToken: !accessToken ? "Access token is required" : undefined,
+                    refreshToken: !refreshToken ? "Refresh token is required" : undefined
+                }
+            });
+        }
+
+        const allRefreshTokens = await prisma.refreshToken.findMany({
+            where: {
+                userId: user?.id
+            }
+        });
+
+        const matchingToken = allRefreshTokens.find((token) => token.token === refreshToken);
+
+        try {
+            await prisma.refreshToken.delete({
+                where: {
+                    id: matchingToken?.id
+                }
+            });
+        } catch (e) {
+            return res.status(404).json({
+                error: {
+                    message: "Couldn't find Refresh Token"
+                }
+            });
+        }
+
+        await prisma.blackListToken.create({
+            data: {
+                accessToken: accessToken
+            }
+        });
+
+        return res.status(200).json({
+            payload: {
+                message: "User logged out successfully"
             }
         });
     }
