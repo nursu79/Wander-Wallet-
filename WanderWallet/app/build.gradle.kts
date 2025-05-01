@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.wanderWallet.wanderwallet"
+    namespace = "com.mobile.wanderwallet"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.wanderWallet.wanderwallet"
+        applicationId = "com.mobile.wanderwallet"
         minSdk = 24
         targetSdk = 35
         versionCode = 1

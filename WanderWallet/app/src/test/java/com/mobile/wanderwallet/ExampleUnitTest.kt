@@ -1,4 +1,4 @@
-package com.wanderWallet.wanderwallet
+package com.mobile.wanderwallet
 
 import org.junit.Test
 
