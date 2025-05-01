@@ -20,6 +20,8 @@ model User {
   trips         Trip[]
   refreshTokens RefreshToken[]
   avatarUrl     String?
+
+  @@index([email])
 }
 
 model Trip {
@@ -35,6 +37,8 @@ model Trip {
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   expenses    Expense[]
   imgUrl      String?
+
+  @@index([startDate, endDate, userId])
 }
 
 model Expense {
@@ -48,6 +52,8 @@ model Expense {
   tripId    String
   trip      Trip     @relation(fields: [tripId], references: [id], onDelete: Cascade)
   notes     String?
+
+  @@index([tripId, category, date])
 }
 
 enum Category {
@@ -66,6 +72,8 @@ model RefreshToken {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([userId])
 }
 
 model BlackListToken {
@@ -73,4 +81,6 @@ model BlackListToken {
   accessToken     String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([accessToken])
 }

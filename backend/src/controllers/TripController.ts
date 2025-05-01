@@ -209,9 +209,19 @@ export default class TripController {
             });
         }
 
+        const totalExpenditure = await prisma.expense.aggregate({
+            where: {
+                tripId: trip.id
+            },
+            _sum: {
+                amount: true
+            }
+        });
+
         return res.status(200).json({
             payload: {
-                trip
+                trip,
+                totalExpenditure: totalExpenditure._sum.amount
             }
         });
     }

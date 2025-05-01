@@ -7,6 +7,7 @@ import userRouter from "./routes/UserRouter.js";
 import tripRouter from "./routes/TripRouter.js";
 import prisma from "./dbClient.js";
 import expenseRouter from "./routes/ExpenseRouter.js";
+import statsRouter from "./routes/StatsRouter.js";
 
 const app = express();
 app.use(express.json());
@@ -25,6 +26,7 @@ app.use(express.static(path.join(__dirname, '../public')));
 app.use(userRouter);
 app.use(tripRouter);
 app.use(expenseRouter);
+app.use(statsRouter);
 
 app.get("/", (req, res) => {
     res.json({ message: "Hello World!" });
