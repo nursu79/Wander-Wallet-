@@ -22,20 +22,16 @@ export default class TripController {
                     });
                 } catch (e) {
                     return res.status(500).json({
-                        error: {
-                            message: "An unexpected error occured"
-                        }
-                    })
+                        message: "An unexpected error occured"
+                    });
                 }
             }
             return res.status(400).json({
-                error: {
-                    name: !name ? "Name is required" : undefined,
-                    destination: !destination ? "Destination is required" : undefined,
-                    budget: !budget ? "Budget is required" : (isNaN(budgetNumber) || budgetNumber <= 0 ? "Budget must be a positive number" : undefined),
-                    startDate: !startDate ? "Start date is required" : (isNaN(startDateDate.getTime()) ? "Start date is not a valid date" : (startDateDate > endDateDate ? "Start date must be before end date" : undefined)),
-                    endDate: !endDate ? "End date is required" : (isNaN(endDateDate.getTime()) ? "End date is not a valid date" : (startDateDate > endDateDate ? "End date must be after start date" : undefined)),
-                }
+                name: !name ? "Name is required" : undefined,
+                destination: !destination ? "Destination is required" : undefined,
+                budget: !budget ? "Budget is required" : (isNaN(budgetNumber) || budgetNumber <= 0 ? "Budget must be a positive number" : undefined),
+                startDate: !startDate ? "Start date is required" : (isNaN(startDateDate.getTime()) ? "Start date is not a valid date" : (startDateDate > endDateDate ? "Start date must be before end date" : undefined)),
+                endDate: !endDate ? "End date is required" : (isNaN(endDateDate.getTime()) ? "End date is not a valid date" : (startDateDate > endDateDate ? "End date must be after start date" : undefined)),
             });
         }
 
@@ -59,9 +55,7 @@ export default class TripController {
             });
 
             return res.status(201).json({
-                payload: {
-                    trip
-                } 
+                trip
             });
         }
 
@@ -74,16 +68,12 @@ export default class TripController {
                 });
             } catch (e) {
                 return res.status(500).json({
-                    error: {
-                        message: "An unexpected error occured"
-                    }
-                })
+                    message: "An unexpected error occured"
+                });
             }
         }
         return res.status(500).json({
-            error: {
-                message: "An error occurred while creating the trip"
-            }
+            message: "An error occurred while creating the trip"
         });
     }
 
@@ -97,16 +87,12 @@ export default class TripController {
             });
 
             return res.status(200).json({
-                payload: {
-                    trips
-                }
+                trips
             });
         }
 
         return res.status(500).json({
-            error: {
-                message: "An error occurred while fetching the trips"
-            }
+            message: "An error occurred while fetching the trips"
         });
     }
 
@@ -123,16 +109,12 @@ export default class TripController {
             });
 
             return res.status(200).json({
-                payload: {
-                    trips
-                }
+                trips
             });
         }
 
         return res.status(500).json({
-            error: {
-                message: "An error occurred while fetching the trips"
-            }
+            message: "An error occurred while fetching the trips"
         });
     }
 
@@ -152,11 +134,13 @@ export default class TripController {
             });
 
             return res.status(200).json({
-                payload: {
-                    trips
-                }
+                trips
             });
         }
+
+        return res.status(500).json({
+            message: "An error occurred while fetching the trips"
+        });
     }
 
     static async getPastTrips(req: Request, res: Response) {
@@ -172,11 +156,13 @@ export default class TripController {
             });
 
             return res.status(200).json({
-                payload: {
-                    trips
-                }
+                trips
             });
         }
+
+        return res.status(500).json({
+            message: "An error occurred while fetching the trips"
+        });
     }
 
     static async getTrip(req: Request, res: Response) {
@@ -185,9 +171,7 @@ export default class TripController {
 
         if (!id) {
             return res.status(400).json({
-                error: {
-                    message: "Trip ID is required"
-                }
+                message: "Trip ID is required"
             });
         }
 
@@ -203,9 +187,7 @@ export default class TripController {
 
         if (!trip) {
             return res.status(404).json({
-                error: {
-                    message: "Trip not found"
-                }
+                message: "Trip not found"
             });
         }
 
@@ -219,10 +201,8 @@ export default class TripController {
         });
 
         return res.status(200).json({
-            payload: {
-                trip,
-                totalExpenditure: totalExpenditure._sum.amount
-            }
+            trip,
+            totalExpenditure: totalExpenditure._sum.amount
         });
     }
 
@@ -232,9 +212,7 @@ export default class TripController {
 
         if (!id) {
             return res.status(400).json({
-                error: {
-                    message: "Trip ID is required"
-                }
+                message: "Trip ID is required"
             });
         }
     
@@ -246,9 +224,7 @@ export default class TripController {
         }); 
         if (!trip) {
             return res.status(404).json({
-                error: {
-                    message: "Trip not found"
-                }
+                message: "Trip not found"
             });
         }
         
@@ -270,15 +246,11 @@ export default class TripController {
             }
 
             return res.json({
-                payload: {
-                    message: "Trip deleted successfully"
-                }
+                message: "Trip deleted successfully"
             });
         } catch (e) {
             return res.status(500).json({
-                error: {
-                    message: "An error occurred while deleting the trip"
-                }
+                message: "An error occurred while deleting the trip"
             });
         }
     }
@@ -302,20 +274,16 @@ export default class TripController {
                     });
                 } catch (e) {
                     return res.status(500).json({
-                        error: {
-                            message: "An unexpected error occured"
-                        }
-                    })
+                        message: "An unexpected error occured"
+                    });
                 }
             }
             return res.status(400).json({
-                error: {
-                    name: !name ? "Name is required" : undefined,
-                    destination: !destination ? "Destination is required" : undefined,
-                    budget: !budget ? "Budget is required" : (isNaN(budgetNumber) || budgetNumber <= 0 ? "Budget must be a positive number" : undefined),
-                    startDate: !startDate ? "Start date is required" : (isNaN(startDateDate.getTime()) ? "Start date is not a valid date" : (startDateDate > endDateDate ? "Start date must be before end date" : undefined)),
-                    endDate: !endDate ? "End date is required" : (isNaN(endDateDate.getTime()) ? "End date is not a valid date" : (startDateDate > endDateDate ? "End date must be after start date" : undefined)),
-                }
+                name: !name ? "Name is required" : undefined,
+                destination: !destination ? "Destination is required" : undefined,
+                budget: !budget ? "Budget is required" : (isNaN(budgetNumber) || budgetNumber <= 0 ? "Budget must be a positive number" : undefined),
+                startDate: !startDate ? "Start date is required" : (isNaN(startDateDate.getTime()) ? "Start date is not a valid date" : (startDateDate > endDateDate ? "Start date must be before end date" : undefined)),
+                endDate: !endDate ? "End date is required" : (isNaN(endDateDate.getTime()) ? "End date is not a valid date" : (startDateDate > endDateDate ? "End date must be after start date" : undefined)),
             });
         }
 
@@ -353,10 +321,8 @@ export default class TripController {
                 }
 
                 return res.status(200).json({
-                    payload: {
-                        trip: updatedTrip
-                    }
-                })
+                    trip: updatedTrip
+                });
             }
             catch (e) {
                 if (tripImage) {
@@ -368,16 +334,12 @@ export default class TripController {
                         });
                     } catch (e) {
                         return res.status(500).json({
-                            error: {
-                                message: "An unexpected error occured"
-                            }
+                            message: "An unexpected error occured"
                         })
                     }
                 }
                 return res.status(400).json({
-                    error: {
-                        message: "Couldn't find trip"
-                    }
+                    message: "Couldn't find trip"
                 });
             }
         }

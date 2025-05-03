@@ -17,26 +17,20 @@ export default class UserController {
                     fs.rm(path.join("public", "userAvatars", avatarUrl), (err) => {
                         if (err) {
                             return res.status(500).json({
-                                error: {
-                                    message: "An unknown error occured"
-                                }
+                                message: "An unexpected error occured"
                             })
                         }
                     });
                 } catch (e) {
                     return res.status(500).json({
-                        error: {
-                            message: "An unexpected error occured"
-                        }
+                        message: "An unexpected error occured"
                     });
                 }
             }
             return res.status(400).json({ 
-                error: {
-                    username: !username ? "Username is required" : undefined,
-                    email: !email ? "Email is required" : undefined,
-                    password: !password ? "Password is required" : undefined
-                }
+                username: !username ? "Username is required" : undefined,
+                email: !email ? "Email is required" : undefined,
+                password: !password ? "Password is required" : undefined
              });
         }
 
@@ -52,24 +46,18 @@ export default class UserController {
                     fs.rm(path.join("public", "userAvatars", avatarUrl), (err) => {
                         if (err) {
                             return res.status(500).json({
-                                error: {
-                                    message: "An unknown error occured"
-                                }
+                                message: "An unexpected error occured"
                             })
                         }
                     });
                 } catch (e) {
                     return res.status(500).json({
-                        error: {
-                            message: "An unexpected error occured"
-                        }
+                        message: "An unexpected error occured"
                     });
                 }
             }
             return res.status(409).json({ 
-                error: {
-                    email: "User already exists"
-                }
+                email: "User already exists"
             });
         }
 
@@ -98,29 +86,25 @@ export default class UserController {
         });
 
         return res.status(201).json({
-            payload: {
-                user: await prisma.user.findUnique({
-                    where: {
-                        id: newUser.id
-                    },
-                    omit: {
-                        password: true,
-                    }
-                }),
-                accessToken,
-                refreshToken
-            }
+            user: await prisma.user.findUnique({
+                where: {
+                    id: newUser.id
+                },
+                omit: {
+                    password: true,
+                }
+            }),
+            accessToken,
+            refreshToken
         });
     }
 
     static async loginUser(req: Request, res: Response) {
         const {email, password} = req.body || {};
         if (!email || !password) {
-            return res.status(400).json({ 
-                error: {
-                    email: !email ? "Email is required" : undefined,
-                    password: !password ? "Password is required" : undefined
-                }
+            return res.status(400).json({
+                email: !email ? "Email is required" : undefined,
+                passworouterrd: !password ? "Password is required" : undefined
              });
         }
 
@@ -131,19 +115,15 @@ export default class UserController {
         });
 
         if (!user) {
-            return res.status(401).json({ 
-                error: { 
-                    message: "Invalid email or password" 
-                } 
+            return res.status(401).json({
+                message: "Invalid email or password" 
             });
         }
 
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
-            return res.status(401).json({ 
-                error: { 
-                    message: "Invalid email or password" 
-                } 
+            return res.status(401).json({
+                message: "Invalid email or password" 
             });
         }
 
@@ -162,10 +142,8 @@ export default class UserController {
         });
 
         return res.status(200).json({
-            payload: {
-                accessToken,
-                refreshToken
-            }
+            accessToken,
+            refreshToken
         });
     }
 
@@ -174,9 +152,7 @@ export default class UserController {
 
         if (!refreshToken) {
             return res.status(401).json({ 
-                error: { 
-                    message: "Refresh token is required" 
-                } 
+                message: "Refresh token is required" 
             });
         }
 
@@ -184,9 +160,7 @@ export default class UserController {
 
         if (!user) {
             return res.status(401).json({ 
-                error: { 
-                    message: "Refresh token is expired or invalid" 
-                } 
+                message: "Refresh token is expired or invalid" 
             });
         }
 
@@ -198,9 +172,7 @@ export default class UserController {
     
         if (!existingUser) {
             return res.status(401).json({ 
-                error: { 
-                    message: "Refresh token is expired or invalid" 
-                } 
+                message: "Refresh token is expired or invalid" 
             });
         }
     
@@ -218,9 +190,7 @@ export default class UserController {
             });
         } catch (e) {
             return res.status(404).json({
-                error: {
-                    message: "Couldn't find Refresh Token"
-                }
+                message: "Couldn't find Refresh Token"
             })
         }
 
@@ -239,10 +209,8 @@ export default class UserController {
         });
 
         return res.status(200).json({
-            payload: {
-                accessToken: newAccessToken,
-                refreshToken: newRefreshToken
-            }
+            accessToken: newAccessToken,
+            refreshToken: newRefreshToken
         });
     }
 
@@ -250,9 +218,7 @@ export default class UserController {
         const accessToken = req.headers["authorization"]?.split(" ")[1];
         if (!accessToken) {
             return res.status(401).json({ 
-                error: { 
-                    message: "Access token is required"
-                }
+                message: "Access token is required"
             });
         }
 
@@ -260,9 +226,7 @@ export default class UserController {
 
         if (!user) {
             return res.status(401).json({ 
-                error: { 
-                    message: "Access token is expired or invalid" 
-                } 
+                message: "Access token is expired or invalid" 
             });
         }
 
@@ -277,16 +241,12 @@ export default class UserController {
 
         if (!existingUser) {
             return res.status(401).json({ 
-                error: { 
-                    message: "Access token is expired or invalid" 
-                } 
+                message: "Access token is expired or invalid" 
             });
         }
 
         return res.status(200).json({
-            payload: {
-                user: existingUser
-            }
+            user: existingUser
         });
     }
 
@@ -302,24 +262,18 @@ export default class UserController {
                     fs.rm(path.join("public", "userAvatars", avatarUrl), (err) => {
                         if (err) {
                             return res.status(500).json({
-                                error: {
-                                    message: "An unknown error occured"
-                                }
+                                message: "An unexpected error occured"
                             })
                         }
                     });
                 } catch (e) {
                     return res.status(500).json({
-                        error: {
-                            message: "An unexpected error occured"
-                        }
+                        message: "An unexpected error occured"
                     });
                 }
             }
             return res.status(400).json({ 
-                error: {
-                    username: "Username is required",
-                }
+                username: "Username is required",
              });
         }
 
@@ -353,9 +307,7 @@ export default class UserController {
             }
 
             return res.status(200).json({
-                payload: {
-                    user: updatedUser
-                }
+                user: updatedUser
             });
         } catch (e) {
             if (avatarUrl) {
@@ -363,24 +315,18 @@ export default class UserController {
                     fs.rm(path.join("public", "userAvatars", avatarUrl), (err) => {
                         if (err) {
                             return res.status(500).json({
-                                error: {
-                                    message: "An unknown error occured"
-                                }
-                            })
+                                message: "An unknown error occured"
+                            });
                         }
                     });
                 } catch (e) {
                     return res.status(500).json({
-                        error: {
-                            message: "An unexpected error occured"
-                        }
+                        message: "An unexpected error occured"
                     });
                 }
             }
             return res.status(500).json({
-                error: {
-                    message: "An unknown error occured"
-                }
+                message: "An unknown error occured"
             });
         }
     }
@@ -392,10 +338,8 @@ export default class UserController {
 
         if (!refreshToken || !accessToken) {
             return res.status(400).json({
-                error: {
-                    accessToken: !accessToken ? "Access token is required" : undefined,
-                    refreshToken: !refreshToken ? "Refresh token is required" : undefined
-                }
+                accessToken: !accessToken ? "Access token is required" : undefined,
+                refreshToken: !refreshToken ? "Refresh token is required" : undefined
             });
         }
 
@@ -415,9 +359,7 @@ export default class UserController {
             });
         } catch (e) {
             return res.status(404).json({
-                error: {
-                    message: "Couldn't find Refresh Token"
-                }
+                message: "Couldn't find Refresh Token"
             });
         }
 
@@ -428,9 +370,7 @@ export default class UserController {
         });
 
         return res.status(200).json({
-            payload: {
-                message: "User logged out successfully"
-            }
+            message: "User logged out successfully"
         });
     }
 }

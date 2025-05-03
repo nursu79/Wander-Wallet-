@@ -14,20 +14,16 @@ export default class ExpenseController {
 
         if (!id) {
             return res.status(400).json({
-                error: {
-                    message: "Trip ID is required"
-                }
+                message: "Trip ID is required"
             });
         }
 
         if (!name || !amount || isNaN(amountNumber) || amountNumber <= 0 || !category || !categoryList.includes((category as string).toUpperCase()) || !date || isNaN(dateDate.getTime())) {
             return res.status(400).json({ 
-                error: {
-                    name: !name ? "Name is required" : undefined,
-                    amount: !amount ? "Amount is required" : ((isNaN(amountNumber) || amountNumber <= 0) ? "Amount must be a positive integer" : undefined),
-                    category: !category ? "Category is required" : (!categoryList.includes((category as string).toUpperCase()) ? "Category is invalid" : undefined),
-                    date: !date ? "Date is required" : (isNaN(dateDate.getTime()) ? "Date is invalid" : undefined)
-                }
+                name: !name ? "Name is required" : undefined,
+                amount: !amount ? "Amount is required" : ((isNaN(amountNumber) || amountNumber <= 0) ? "Amount must be a positive integer" : undefined),
+                category: !category ? "Category is required" : (!categoryList.includes((category as string).toUpperCase()) ? "Category is invalid" : undefined),
+                date: !date ? "Date is required" : (isNaN(dateDate.getTime()) ? "Date is invalid" : undefined)
              });
         }
 
@@ -40,17 +36,13 @@ export default class ExpenseController {
 
         if (!trip) {
             return res.status(404).json({
-                error: {
-                    message: "Trip not found"
-                }
+                message: "Trip not found"
             });
         }
 
         if (dateDate < trip.startDate || dateDate > trip.endDate) {
             return res.status(400).json({
-                error: {
-                    date: "Date must be within trip timeline"
-                }
+                date: "Date must be within trip timeline"
             })
         }
 
@@ -66,9 +58,7 @@ export default class ExpenseController {
         });
 
         return res.status(201).json({
-            payload: {
-                expense: newExpense
-            }
+            expense: newExpense
         });
     }
 
@@ -78,9 +68,7 @@ export default class ExpenseController {
 
         if (!id) {
             res.status(400).json({
-                error: {
-                    message: "Trip ID is required"
-                }
+                message: "Trip ID is required"
             });
         }
 
@@ -96,16 +84,12 @@ export default class ExpenseController {
 
         if (!trip) {
             return res.status(404).json({
-                error: {
-                    message: "Trip not found"
-                }
+                message: "Trip not found"
             });
         }
 
         return res.status(200).json({
-            payload: {
-                expenses: trip.expenses
-            }
+            expenses: trip.expenses
         });
     }
 
@@ -115,10 +99,8 @@ export default class ExpenseController {
 
         if (!id) {
             return res.status(400).json({
-                error: {
-                    id: "Expense ID is required"
-                }
-            })
+                message: "Expense ID is required"
+            });
         }
 
         const expense = await prisma.expense.findUnique({
@@ -132,16 +114,12 @@ export default class ExpenseController {
 
         if (!expense) {
             return res.status(404).json({
-                error: {
-                    message: "Expense not found"
-                }
+                message: "Expense not found"
             });
         }
 
         return res.status(200).json({
-            payload: {
-                expense
-            }
+            expense
         });
     }
 
@@ -155,20 +133,16 @@ export default class ExpenseController {
 
         if (!id) {
             return res.status(400).json({
-                error: {
-                    message: "Expense ID is required"
-                }
+                message: "Expense ID is required"
             });
         }
 
         if (!name || !amount || isNaN(amountNumber) || amountNumber <= 0 || !category || !categoryList.includes(category) || !date || isNaN(dateDate.getTime())) {
             return res.status(400).json({ 
-                error: {
-                    name: !name ? "Name is required" : undefined,
-                    amount: !amount ? "Amount is required" : ((isNaN(amountNumber) || amountNumber <= 0) ? "Amount must be a positive integer" : undefined),
-                    category: !category ? "Category is required" : (!categoryList.includes(category) ? "Category is invalid" : undefined),
-                    date: !date ? "Date is required" : (isNaN(dateDate.getTime()) ? "Date is invalid" : undefined)
-                }
+                name: !name ? "Name is required" : undefined,
+                amount: !amount ? "Amount is required" : ((isNaN(amountNumber) || amountNumber <= 0) ? "Amount must be a positive integer" : undefined),
+                category: !category ? "Category is required" : (!categoryList.includes(category) ? "Category is invalid" : undefined),
+                date: !date ? "Date is required" : (isNaN(dateDate.getTime()) ? "Date is invalid" : undefined)
              });
         }
 
@@ -186,18 +160,14 @@ export default class ExpenseController {
 
         if (!expense) {
             return res.status(404).json({
-                error: {
-                    message: "Couldn't find Expense"
-                }
+                message: "Couldn't find Expense"
             });
         }
 
         if (dateDate < expense.trip.startDate || dateDate > expense.trip.endDate) {
             return res.status(400).json({
-                error: {
-                    date: "Date must be within trip timeline"
-                }
-            })
+                date: "Date must be within trip timeline"
+            });
         }
         try {
             let updatedExpense;
@@ -235,15 +205,11 @@ export default class ExpenseController {
             }
 
             return res.status(200).json({
-                payload: {
-                    expense: updatedExpense
-                }
+                expense: updatedExpense
             });
         } catch (e) {
             return res.status(404).json({
-                error: {
-                    message: "Couldn't find Expense"
-                }
+                message: "Couldn't find Expense"
             })
         }
     }
@@ -254,10 +220,8 @@ export default class ExpenseController {
 
         if (!id) {
             return res.status(400).json({
-                error: {
-                    id: "Expense ID is required"
-                }
-            })
+                    message: "Expense ID is required"
+            });
         }
 
         try {
@@ -271,15 +235,11 @@ export default class ExpenseController {
             });
 
             return res.status(200).json({
-                payload: {
-                    message: "Expense was deleted successfully"
-                }
+                message: "Expense was deleted successfully"
             })
         } catch (e) {
             return res.status(404).json({
-                error: {
-                    message: "Expense not found"
-                }
+                message: "Expense not found"
             });
         }
     }

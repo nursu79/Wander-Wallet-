@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import prisma from "../dbClient.js";
-import { Prisma } from "@prisma/client";
 import { getUser } from "../utils/index.js";
 
 export default class StatsController {
@@ -33,10 +32,8 @@ export default class StatsController {
         })
 
         return res.status(200).json({
-            payload: {
-                totalSpending: totalSpending._sum.amount || 0,
-                totalBudget: totalBudget._sum.budget
-            }
+            totalSpending: totalSpending._sum.amount || 0,
+            totalBudget: totalBudget._sum.budget
         });
     }
 
@@ -59,9 +56,7 @@ export default class StatsController {
         });
 
         return res.status(200).json({
-            payload: {
-                avgSpending: avgSpending._avg.amount
-            }
+            avgSpending: avgSpending._avg.amount
         })
     }
 
@@ -92,9 +87,7 @@ export default class StatsController {
         }
 
         return res.status(200).json({
-            payload: {
-                avgSpending: totalDaysAllTrips > 0 ? totalSpendingAllTrips / totalDaysAllTrips : 0
-            }
+            avgSpending: totalDaysAllTrips > 0 ? totalSpendingAllTrips / totalDaysAllTrips : 0
         });
     }
 
@@ -123,14 +116,12 @@ export default class StatsController {
         for (const categorySpending of spendingByCategory) {
             categories.push({
                 category: categorySpending.category,
-                amount: categorySpending._sum.amount
+                amount: categorySpending._sum.amount || 0
             });
         }
         return res.json({
-            payload: {
-                categories
-            }
-        })
+            categories
+        });
     }
 
     static async getMonthlySpending(req: Request, res: Response) {
@@ -168,9 +159,7 @@ export default class StatsController {
         }
 
         return res.json({
-            payload: {
-                expensesByMonth: spendingByMonth
-            }
+            expensesByMonth: spendingByMonth
         });
     }
 
@@ -203,9 +192,7 @@ export default class StatsController {
         }));
 
         return res.status(200).json({
-            payload: {
-                budgetComparison: budgetComparison
-            }
+            budgetComparison: budgetComparison
         });
     }
 
@@ -241,10 +228,8 @@ export default class StatsController {
         });
 
         return res.status(200).json({
-            payload: {
-                trip: mostExpensiveTrip,
-                totalExpenditure: tripExpenses[0]?._sum.amount || 0
-            }
+            trip: mostExpensiveTrip,
+            totalExpenditure: tripExpenses[0]?._sum.amount || 0
         });
     }
 
@@ -280,10 +265,8 @@ export default class StatsController {
         });
 
         return res.status(200).json({
-            payload: {
-                trip: leastExpensiveTrip,
-                totalExpenditure: tripExpenses[0]?._sum.amount || 0
-            }
+            trip: leastExpensiveTrip,
+            totalExpenditure: tripExpenses[0]?._sum.amount || 0
         });
     }
 }

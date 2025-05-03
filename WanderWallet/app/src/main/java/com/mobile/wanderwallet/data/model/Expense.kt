@@ -1,0 +1,32 @@
+package com.mobile.wanderwallet.data.model
+
+import java.util.Date
+
+data class Expense(
+    val id: String,
+    val name: String,
+    val amount: Float,
+    val category: Category,
+    val date: Date,
+    val createdAt: Date,
+    val updatedAt: Date,
+    val tripId: String,
+    val notes: String?
+)
+
+enum class Category {
+    FOOD,
+    ACCOMMODATION,
+    TRANSPORTATION,
+    ENTERTAINMENT,
+    SHOPPING,
+    OTHER
+}
+
+data class CreateExpenseRequest(
+    val name: String,
+    val amount: String,
+    val category: Category,
+    val date: Date,
+    val notes: String?
+)
