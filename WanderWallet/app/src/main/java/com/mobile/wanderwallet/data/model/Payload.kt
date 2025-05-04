@@ -81,3 +81,8 @@ data class AllStats(
     val mostExpensiveTrip: TripPayload,
     val leastExpensiveTrip: TripPayload
 )
+
+sealed class Result<out T, out E> {
+    data class Success<out T>(val data: T): Result<T, Nothing>()
+    data class Error<E>(val error: E, val loggedOut: Boolean = false): Result<Nothing, E>()
+}

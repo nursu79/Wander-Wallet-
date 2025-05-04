@@ -104,7 +104,7 @@ export default class UserController {
         if (!email || !password) {
             return res.status(400).json({
                 email: !email ? "Email is required" : undefined,
-                passworouterrd: !password ? "Password is required" : undefined
+                password: !password ? "Password is required" : undefined
              });
         }
 
@@ -215,14 +215,7 @@ export default class UserController {
     }
 
     static async getProfile(req: Request, res: Response) {
-        const accessToken = req.headers["authorization"]?.split(" ")[1];
-        if (!accessToken) {
-            return res.status(401).json({ 
-                message: "Access token is required"
-            });
-        }
-
-        const user = verifyAccessToken(accessToken) as JwtPayload;
+        const user = getUser(req);
 
         if (!user) {
             return res.status(401).json({ 
