@@ -10,19 +10,15 @@ const upload = multer({
             const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1E9);
             const fileExtension = path.extname(file.originalname);
 
-            cb(null, file.fieldname + "-" + uniqueSuffix + fileExtension);
+            cb(null, file.fieldname + "-" + uniqueSuffix + (fileExtension || ".png"));
         }
     }),
 
     fileFilter: (req, file, cb) => {
-        const filetypes = /jpeg|jpg|png|gif/;
-        const mimetype = filetypes.test(file.mimetype);
-        const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-
-        if (mimetype && extname) {
+        if (file.mimetype.startsWith("image")) {
             return cb(null, true);
         } else {
-            cb(Error("Error: File upload only supports the following filetypes - " + filetypes));
+            cb(Error("Error: File upload only supports images"));
         }
     },
 
