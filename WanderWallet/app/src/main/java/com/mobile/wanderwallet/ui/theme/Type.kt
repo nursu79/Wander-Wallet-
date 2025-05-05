@@ -55,18 +55,23 @@ val Typography = Typography(
     ),
     bodyLarge = TextStyle(
         fontFamily = Inter,
-        fontWeight = FontWeight.Normal,
-        fontSize = 20.sp
+        fontWeight = FontWeight.Bold,
+        fontSize = 18.sp
+    ),
+    bodyMedium = TextStyle(
+        fontFamily = Inter,
+        fontWeight = FontWeight.Bold,
+        fontSize = 16.sp
     ),
     bodySmall = TextStyle(
         fontFamily = Inter,
         fontWeight = FontWeight.Light,
-        fontSize = 12.sp
+        fontSize = 16.sp
     ),
     labelLarge = TextStyle(
         fontFamily = Inter,
         fontWeight = FontWeight.Light,
-        fontSize = 12.sp
+        fontSize = 14.sp
     ),
     labelMedium = TextStyle(
         fontFamily = Inter,

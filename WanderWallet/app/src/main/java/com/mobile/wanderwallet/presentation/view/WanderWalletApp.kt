@@ -1,16 +1,95 @@
 package com.mobile.wanderwallet.presentation.view
 
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.mobile.wanderwallet.presentation.viewmodel.WanderWalletAppViewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 
 @Composable
 fun WanderWalletApp(
-    viewModel: WanderWalletAppViewModel = hiltViewModel<WanderWalletAppViewModel>(),
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    navController: NavHostController = rememberNavController(),
 ) {
-    Surface(color = MaterialTheme.colorScheme.primary) {}
+    Surface(
+        modifier = modifier
+    ) {
+        NavHost(
+            navController = navController,
+            startDestination = "splash"
+        ) {
+            composable(route = "splash") {
+                SplashScreen(
+                    onUserFound = {
+                        navController.navigate("main") {
+                            popUpTo("splash") { inclusive = true }
+                        }
+                    },
+                    onUserNotFound = {
+                        navController.navigate("welcome") {
+                            popUpTo("splash") { inclusive = true }
+                        }
+                    },
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+
+            composable(route = "welcome") {
+                WelcomeScreen(
+                    onCreateAccountClicked = {
+                        navController.navigate("register")
+                    },
+                    onSignInClicked = {
+                        navController.navigate("login")
+                    },
+                    modifier = modifier.fillMaxSize()
+                )
+            }
+
+            composable(route = "login") {
+                LoginScreen(
+                    onUpButtonClick = {
+                        navController.navigateUp()
+                    },
+                    onSuccessfulLogin = {
+                        navController.navigate("main") {
+                            popUpTo(0) { inclusive = true }
+                        }
+                    },
+                    onRegisterClick = {
+                        navController.navigate("register")
+                    },
+                    modifier = modifier.fillMaxSize()
+                )
+            }
+
+            composable(route = "register") {
+                RegisterScreen(
+                    onUpButtonClick = {
+                        navController.navigateUp()
+                    },
+                    onSuccessfulRegister = {
+                        navController.navigate("main") {
+                            popUpTo(0) { inclusive = true }
+                        }
+                    },
+                    onLoginClick = {
+                        navController.navigate("login")
+                    },
+                    modifier = modifier.fillMaxSize()
+                )
+            }
+
+            composable(route = "main") {
+                MainContentScreen(
+                    onLoggedOut = {
+                        navController.navigate("login")
+                    }
+                )
+            }
+        }
+    }
 }

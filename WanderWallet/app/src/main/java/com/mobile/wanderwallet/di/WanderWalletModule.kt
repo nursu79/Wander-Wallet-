@@ -52,7 +52,7 @@ object WanderWalletModule {
     fun provideRetrofit(
         okHttpClient: OkHttpClient
     ): Retrofit {
-        val baseUrl = "http://192.168.51.68:3000"
+        val baseUrl = BuildConfig.BASE_URL
         return Retrofit.Builder()
             .baseUrl(baseUrl)
             .client(okHttpClient)

@@ -1,0 +1,13 @@
+package com.mobile.wanderwallet.presentation.view
+
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+
+@Composable
+fun TripDetailsScreen(
+    id: String,
+    onLoggedOut: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+
+}

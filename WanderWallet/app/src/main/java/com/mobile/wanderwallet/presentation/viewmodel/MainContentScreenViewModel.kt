@@ -14,17 +14,17 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import javax.inject.Inject
 
-sealed interface SplashScreenUiState {
-    data class Success(val data: UserPayload): SplashScreenUiState
-    data class Error(val error: MessageError, val loggedOut: Boolean = false): SplashScreenUiState
-    data object Loading: SplashScreenUiState
+sealed interface MainContentScreenUiState {
+    data class Success(val data: UserPayload): MainContentScreenUiState
+    data class Error(val error: MessageError, val loggedOut: Boolean = false): MainContentScreenUiState
+    data object Loading: MainContentScreenUiState
 }
 
 @HiltViewModel
-class SplashScreenViewModel @Inject constructor(
+class MainContentScreenViewModel @Inject constructor(
     private val apiRepository: WanderWalletApiRepository
 ): ViewModel() {
-    var splashScreenUiState: SplashScreenUiState by mutableStateOf(SplashScreenUiState.Loading)
+    var mainContentScreenUiState: MainContentScreenUiState by mutableStateOf(MainContentScreenUiState.Loading)
         private set
 
     init {
@@ -33,15 +33,15 @@ class SplashScreenViewModel @Inject constructor(
 
     fun getUser() {
         viewModelScope.launch {
-            splashScreenUiState = SplashScreenUiState.Loading
+            mainContentScreenUiState = MainContentScreenUiState.Loading
             try {
                 val response = apiRepository.getProfile()
-                splashScreenUiState = when (response) {
-                    is Result.Error<MessageError> -> SplashScreenUiState.Error(response.error, loggedOut = response.loggedOut)
-                    is Result.Success<UserPayload> -> SplashScreenUiState.Success(response.data)
+                mainContentScreenUiState = when (response) {
+                    is Result.Error<MessageError> -> MainContentScreenUiState.Error(response.error, loggedOut = response.loggedOut)
+                    is Result.Success<UserPayload> -> MainContentScreenUiState.Success(response.data)
                 }
             } catch (e: HttpException) {
-                SplashScreenUiState.Error(error = MessageError("An unexpected error occurred"))
+                MainContentScreenUiState.Error(error = MessageError("An unexpected error occurred"))
             }
         }
     }

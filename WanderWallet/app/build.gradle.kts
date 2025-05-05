@@ -31,11 +31,11 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            buildConfigField("String", "BASE_URL", "\"http://localhost:3000\"")
+            buildConfigField("String", "BASE_URL", "\"http://192.168.51.68:3000\"")
         }
 
         debug {
-            buildConfigField("String", "BASE_URL", "\"http://localhost:3000\"")
+            buildConfigField("String", "BASE_URL", "\"http://192.168.51.68:3000\"")
         }
     }
     compileOptions {
@@ -60,6 +60,10 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.material.icons.extended)
+
+    // Navigation
+    implementation(libs.androidx.navigation.compose)
 
     // ViewModel
     implementation(libs.androidx.lifecycle.viewmodel.compose)

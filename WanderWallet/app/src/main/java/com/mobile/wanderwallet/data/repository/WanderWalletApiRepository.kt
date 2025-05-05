@@ -124,7 +124,7 @@ class NetworkWanderWalletApiRepository(
                 Result.Error(UserError(message = e.message))
             }
         } catch (e: IOException) {
-            Result.Error(UserError(message = "Check your internet connection"))
+            Result.Error(UserError(message = "Check your internet connection or the API address"))
         }
     }
 
@@ -147,7 +147,7 @@ class NetworkWanderWalletApiRepository(
                 Result.Error(UserError(message = e.message ?: "An unexpected error occurred"))
             }
         } catch (e: IOException) {
-            Result.Error(UserError(message = "Check your internet connection"))
+            Result.Error(UserError(message = "Check your internet connection or the API address"))
         }
     }
 
@@ -171,7 +171,7 @@ class NetworkWanderWalletApiRepository(
                 Result.Error(MessageError("An unexpected error occurred"))
             }
         } catch (e: IOException) {
-            Result.Error(MessageError(message = "Check your internet connection"))
+            Result.Error(MessageError(message = "Check your internet connection or the API address"))
         }
     }
 
@@ -189,7 +189,7 @@ class NetworkWanderWalletApiRepository(
                     } catch (e: HttpException) {
                         Result.Error(MessageError("Please login and continue"), loggedOut = true)
                     } catch (e: IOException) {
-                        Result.Error(MessageError("Check your internet connection"))
+                        Result.Error(MessageError("Check your internet connection or the API address"))
                     }
                 } else {
                     Result.Error(MessageError("Please login and continue"), loggedOut = true)
@@ -198,13 +198,13 @@ class NetworkWanderWalletApiRepository(
                 try {
                     val errorBody = e.response()?.errorBody()
                     val errorResponse = gson.fromJson(errorBody?.string(), MessageError::class.java)
-                    Result.Error(errorResponse)
+                    Result.Error(errorResponse, loggedOut = true)
                 } catch (e: Throwable) {
                     Result.Error(MessageError("An unexpected error occurred"))
                 }
             }
         } catch (e: IOException) {
-            Result.Error(MessageError("Check your internet connection"))
+            Result.Error(MessageError("Check your internet connection or the API address"))
         }
     }
 
@@ -250,7 +250,7 @@ class NetworkWanderWalletApiRepository(
                 }
             }
         } catch (e: IOException) {
-            Result.Error(UserError(message = "Check your internet connection"))
+            Result.Error(UserError(message = "Check your internet connection or the API address"))
         }
     }
 
@@ -290,7 +290,7 @@ class NetworkWanderWalletApiRepository(
                 }
             }
         } catch (e: IOException) {
-            Result.Error(TokensError(message = "Check your internet connection"))
+            Result.Error(TokensError(message = "Check your internet connection or the API address"))
         }
     }
 
@@ -372,7 +372,7 @@ class NetworkWanderWalletApiRepository(
                 }
             }
         } catch (e: IOException) {
-            Result.Error(TripError(message = "Check your internet connection"))
+            Result.Error(TripError(message = "Check your internet connection or the API address"))
         }
     }
 
@@ -404,7 +404,7 @@ class NetworkWanderWalletApiRepository(
                 }
             }
         } catch (e: IOException) {
-            Result.Error(MessageError(message = "Check your internet connection"))
+            Result.Error(MessageError(message = "Check your internet connection or the API address"))
         }
     }
 
@@ -436,7 +436,7 @@ class NetworkWanderWalletApiRepository(
                 }
             }
         } catch (e: IOException) {
-            Result.Error(MessageError(message = "Check your internet connection"))
+            Result.Error(MessageError(message = "Check your internet connection or the API address"))
         }
     }
 
@@ -468,7 +468,7 @@ class NetworkWanderWalletApiRepository(
                 }
             }
         } catch (e: IOException) {
-            Result.Error(MessageError(message = "Check your internet connection"))
+            Result.Error(MessageError(message = "Check your internet connection or the API address"))
         }
     }
 
@@ -500,7 +500,7 @@ class NetworkWanderWalletApiRepository(
                 }
             }
         } catch (e: IOException) {
-            Result.Error(MessageError(message = "Check your internet connection"))
+            Result.Error(MessageError(message = "Check your internet connection or the API address"))
         }    }
 
     override suspend fun getTrip(id: String, retry: Boolean): Result<TripPayload, MessageError> {
@@ -531,7 +531,7 @@ class NetworkWanderWalletApiRepository(
                 }
             }
         } catch (e: IOException) {
-            Result.Error(MessageError(message = "Check your internet connection"))
+            Result.Error(MessageError(message = "Check your internet connection or the API address"))
         }
     }
 
@@ -563,7 +563,7 @@ class NetworkWanderWalletApiRepository(
                 }
             }
         } catch (e: IOException) {
-            Result.Error(MessageError(message = "Check your internet connection"))
+            Result.Error(MessageError(message = "Check your internet connection or the API address"))
         }
     }
 
@@ -647,7 +647,7 @@ class NetworkWanderWalletApiRepository(
                 }
             }
         } catch (e: IOException) {
-            Result.Error(TripError(message = "Check your internet connection"))
+            Result.Error(TripError(message = "Check your internet connection or the API address"))
         }
     }
 
@@ -696,7 +696,7 @@ class NetworkWanderWalletApiRepository(
                 }
             }
         } catch (e: IOException) {
-            Result.Error(ExpenseError(message = "Check your internet connection"))
+            Result.Error(ExpenseError(message = "Check your internet connection or the API address"))
         }
     }
 
@@ -728,7 +728,7 @@ class NetworkWanderWalletApiRepository(
                 }
             }
         } catch (e: IOException) {
-            Result.Error(MessageError(message = "Check your internet connection"))
+            Result.Error(MessageError(message = "Check your internet connection or the API address"))
         }
     }
 
@@ -760,7 +760,7 @@ class NetworkWanderWalletApiRepository(
                 }
             }
         } catch (e: IOException) {
-            Result.Error(MessageError(message = "Check your internet connection"))
+            Result.Error(MessageError(message = "Check your internet connection or the API address"))
         }
     }
 
@@ -808,7 +808,7 @@ class NetworkWanderWalletApiRepository(
                 }
             }
         } catch (e: IOException) {
-            Result.Error(ExpenseError(message = "Check your internet connection"))
+            Result.Error(ExpenseError(message = "Check your internet connection or the API address"))
         }
     }
 
@@ -840,7 +840,7 @@ class NetworkWanderWalletApiRepository(
                 }
             }
         } catch (e: IOException) {
-            Result.Error(MessageError(message = "Check your internet connection"))
+            Result.Error(MessageError(message = "Check your internet connection or the API address"))
         }
     }
 
