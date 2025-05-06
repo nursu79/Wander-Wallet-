@@ -151,4 +151,5 @@ fun TripCard(
             }
         }
     }
+    Spacer(Modifier.height(32.dp))
 }
