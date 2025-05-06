@@ -5,12 +5,16 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import com.mobile.wanderwallet.presentation.view.WanderWalletApp
+import com.mobile.wanderwallet.ui.components.WanderWalletAppBar
 import com.mobile.wanderwallet.ui.theme.WanderWalletTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -23,6 +27,16 @@ class MainActivity : ComponentActivity() {
             WanderWalletTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
                     WanderWalletApp()
+                    WanderWalletAppBar(
+                        title = "Hi John",
+                        description = "Welcome to Wander Wallet",
+                        descriptionStyle = MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.Normal,
+                            color = Color.White.copy(alpha = 0.9f)
+                        ),
+                        showBackIcon = true,
+                        showCalendarIcon = true,
+                    )
                 }
             }
         }
