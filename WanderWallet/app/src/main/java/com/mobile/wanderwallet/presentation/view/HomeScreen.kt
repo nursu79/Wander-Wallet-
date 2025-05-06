@@ -33,13 +33,14 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.mobile.wanderwallet.R
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(navController: NavController) {
     val trips = listOf(
-        TripCardData("Current Trip", "Business Trip", "San Francisco, California"),
-        TripCardData("Previous Trip", "Conference", "Bali, Indonesia"),
+        TripCardData("current","Current Trip", "Business Trip", "San Francisco, California"),
+        TripCardData("bali","Previous Trip", "Conference", "Bali, Indonesia"),
 
         )
 
@@ -51,7 +52,8 @@ fun HomeScreen() {
             TripCard(
                 title = trip.title,
                 tripType = trip.tripType,
-                location = trip.location
+                location = trip.location,
+                onClick =  { navController.navigate("tripDetails/${trip.id}") }
             )
         }
     }
@@ -59,16 +61,18 @@ fun HomeScreen() {
 
 
 data class TripCardData(
+    val id: String,
     val title: String,
     val tripType: String,
     val location: String
 )
 @Composable
 fun TripCard(
+
     title: String,
     tripType: String,
     location: String,
-//    onClick: () -> Unit,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
@@ -135,7 +139,7 @@ fun TripCard(
 
                     Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                         Button(
-                            onClick = { },
+                            onClick =  onClick ,
                             modifier = Modifier
                                 .fillMaxWidth(0.85f)
                                 .height(48.dp),
