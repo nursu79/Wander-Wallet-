@@ -27,16 +27,6 @@ class MainActivity : ComponentActivity() {
             WanderWalletTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
                     WanderWalletApp()
-                    WanderWalletAppBar(
-                        title = "Hi John",
-                        description = "Welcome to Wander Wallet",
-                        descriptionStyle = MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = FontWeight.Normal,
-                            color = Color.White.copy(alpha = 0.9f)
-                        ),
-                        showBackIcon = true,
-                        showCalendarIcon = true,
-                    )
                 }
             }
         }
