@@ -200,9 +200,20 @@ export default class TripController {
             }
         });
 
+        const expensesByCategory = await prisma.expense.groupBy({
+            by: ["category"],
+            where: {
+                tripId: trip.id
+            },
+            _sum: {
+                amount: true
+            }
+        });
+
         return res.status(200).json({
             trip,
-            totalExpenditure: totalExpenditure._sum.amount
+            totalExpenditure: totalExpenditure._sum.amount,
+            expensesByCategory
         });
     }
 

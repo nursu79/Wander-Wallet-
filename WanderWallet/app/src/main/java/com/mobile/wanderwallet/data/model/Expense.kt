@@ -1,5 +1,6 @@
 package com.mobile.wanderwallet.data.model
 
+import com.google.gson.annotations.SerializedName
 import java.util.Date
 
 data class Expense(
@@ -29,4 +30,9 @@ data class CreateExpenseRequest(
     val category: Category,
     val date: Date,
     val notes: String?
+)
+
+data class ExpenseByCategory(
+    val category: Category,
+    @SerializedName("_sum") val amount: Float?
 )

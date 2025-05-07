@@ -21,7 +21,8 @@ data class UserAndTokensPayload(
 
 data class TripPayload(
     val trip: Trip?,
-    val totalExpenditure: Float?
+    val totalExpenditure: Float?,
+    val expensesByCategory: List<ExpenseByCategory>
 )
 
 data class TripsPayload(
