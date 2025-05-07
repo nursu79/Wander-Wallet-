@@ -85,7 +85,7 @@ fun TripCard(
                             color = Color(0xFF377474),
                             fontWeight = FontWeight.Bold
                         ),
-                        modifier = Modifier.padding(bottom = 8.dp)
+                        modifier = Modifier.padding(bottom = 4.dp)
                     )
 
 
@@ -103,7 +103,7 @@ fun TripCard(
                         )
                     }
 
-                    Spacer(Modifier.height(16.dp))
+                    Spacer(Modifier.height(40.dp))
 
 
                     Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
