@@ -22,7 +22,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
@@ -47,16 +46,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mobile.wanderwallet.R
-import com.mobile.wanderwallet.ui.theme.WanderWalletTheme
-
-//@Composable
-//fun TripDetailsScreen(
-//    id: String,
-//    onLoggedOut: () -> Unit,
-//    modifier: Modifier = Modifier
-//) {
-//
-//}
 
 data class Expense(
     val category: String,
@@ -243,15 +232,19 @@ fun ExpenseCard(expense: Expense, onClick: () -> Unit) {
                     style = MaterialTheme.typography.titleMedium
                 )
                 Text(
-                    text = "$${expense.amount}",
+                    text = "Total Expense",
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
-            Icon(
-                Icons.AutoMirrored.Filled.ArrowForward,
-                contentDescription = "View details",
-                modifier = Modifier.size(24.dp)
+            Text(
+                text = "$${expense.amount}",
+                style = MaterialTheme.typography.bodyMedium
             )
+//            Icon(
+//                Icons.AutoMirrored.Filled.ArrowForward,
+//                contentDescription = "View details",
+//                modifier = Modifier.size(24.dp)
+//            )
         }
     }
 }
