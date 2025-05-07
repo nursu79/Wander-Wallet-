@@ -13,7 +13,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ChevronLeft
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.QueryStats
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.QueryStats
@@ -31,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -43,6 +47,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.mobile.wanderwallet.BuildConfig
 import com.mobile.wanderwallet.R
 import com.mobile.wanderwallet.data.model.User
@@ -158,7 +163,7 @@ fun MainContentNavigation(
             MainContentAppBar(
                 user = user,
                 currentScreen = currentScreen,
-                canNavigateBack = navController.previousBackStackEntry != null,
+                canNavigateBack = (currentScreen !is MainContentScreen.TripsScreen && navController.previousBackStackEntry != null),
                 navigateUp = { navController.navigateUp() },
                 modifier = Modifier
                     .height(160.dp)
@@ -285,6 +290,7 @@ fun MainContentAppBar(
                 horizontalArrangement = Arrangement.spacedBy(20.dp),
                 modifier = Modifier.fillMaxHeight()
             ) {
+                val baseUrl = BuildConfig.BASE_URL
                 Image(
                     painter = painterResource(R.drawable.topbar_image),
                     contentDescription = null,
@@ -294,7 +300,10 @@ fun MainContentAppBar(
                         .weight(1f)
                 )
                 AsyncImage(
-                    model = BuildConfig.BASE_URL + "/" + user.avatarUrl,
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(baseUrl + "/userAvatars/" + user.avatarUrl)
+                        .crossfade(true)
+                        .build(),
                     contentDescription = "User avatar",
                     placeholder = painterResource(R.drawable.default_avatar),
                     error = painterResource(R.drawable.default_avatar),
@@ -321,6 +330,7 @@ fun MainContentBottomBar(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
+            .height(60.dp)
     ) {
         Row(
             horizontalArrangement = Arrangement.SpaceEvenly,
@@ -328,39 +338,28 @@ fun MainContentBottomBar(
             modifier = Modifier.fillMaxWidth()
         ) {
             IconButton(
-                onClick = navigateToProfileScreen,
-                colors = IconButtonDefaults.iconButtonColors(
-                    contentColor = if (currentScreen is MainContentScreen.ProfileScreen) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.onPrimary
-                )
+                onClick = navigateToProfileScreen
             ) {
                 Icon(
-                    imageVector = Icons.Outlined.AccountCircle,
+                    imageVector = if (currentScreen is MainContentScreen.ProfileScreen) Icons.Filled.AccountCircle else Icons.Outlined.AccountCircle,
                     contentDescription = "Go to profile screen",
                     modifier = Modifier.size(24.dp)
                 )
             }
             IconButton(
-                onClick = navigateToTripsScreen,
-                colors = IconButtonDefaults.iconButtonColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = if (currentScreen is MainContentScreen.TripsScreen) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.onPrimary
-                )
+                onClick = navigateToTripsScreen
             ) {
                 Icon(
-                    imageVector = Icons.Outlined.Home,
+                    imageVector = if (currentScreen is MainContentScreen.TripsScreen) Icons.Filled.Home else Icons.Outlined.Home,
                     contentDescription = "Go to home screen",
                     modifier = Modifier.size(24.dp)
                 )
             }
             IconButton(
-                onClick = navigateToSummaryScreen,
-                colors = IconButtonDefaults.iconButtonColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = if (currentScreen is MainContentScreen.SummaryScreen) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.onPrimary
-                )
+                onClick = navigateToSummaryScreen
             ) {
                 Icon(
-                    imageVector = Icons.Outlined.QueryStats,
+                    imageVector = if (currentScreen is MainContentScreen.SummaryScreen) Icons.Filled.QueryStats else Icons.Outlined.QueryStats,
                     contentDescription = "Go to summary screen",
                     modifier = Modifier.size(24.dp)
                 )
