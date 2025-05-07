@@ -31,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -43,6 +44,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.mobile.wanderwallet.BuildConfig
 import com.mobile.wanderwallet.R
 import com.mobile.wanderwallet.data.model.User
@@ -294,7 +296,10 @@ fun MainContentAppBar(
                         .weight(1f)
                 )
                 AsyncImage(
-                    model = BuildConfig.BASE_URL + "/" + user.avatarUrl,
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(BuildConfig.BASE_URL + "/userAvatars/" + user.avatarUrl)
+                        .crossfade(true)
+                        .build(),
                     contentDescription = "User avatar",
                     placeholder = painterResource(R.drawable.default_avatar),
                     error = painterResource(R.drawable.default_avatar),

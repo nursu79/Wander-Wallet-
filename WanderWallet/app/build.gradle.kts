@@ -31,11 +31,11 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            buildConfigField("String", "BASE_URL", "\"http://192.168.51.212:3000\"")
+            buildConfigField("String", "BASE_URL", "\"http://192.168.175.212:3000\"")
         }
 
         debug {
-            buildConfigField("String", "BASE_URL", "\"http://192.168.51.212:3000\"")
+            buildConfigField("String", "BASE_URL", "\"http://192.168.175.212:3000\"")
         }
     }
     compileOptions {
