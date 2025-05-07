@@ -1,8 +1,7 @@
-package com.mobile.wanderwallet.presentation.view
+package com.mobile.wanderwallet.presentation.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,8 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
@@ -32,42 +29,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.mobile.wanderwallet.R
 
-@Composable
-fun HomeScreen(navController: NavController) {
-    val trips = listOf(
-        TripCardData("current","Current Trip", "Business Trip", "San Francisco, California"),
-        TripCardData("bali","Previous Trip", "Conference", "Bali, Indonesia"),
-
-        )
-
-    LazyColumn(
-        modifier = Modifier.padding(18.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        items(trips) { trip ->
-            TripCard(
-                title = trip.title,
-                tripType = trip.tripType,
-                location = trip.location,
-                onClick =  { navController.navigate("tripDetails/${trip.id}") }
-            )
-        }
-    }
-}
-
-
-data class TripCardData(
-    val id: String,
-    val title: String,
-    val tripType: String,
-    val location: String
-)
 @Composable
 fun TripCard(
 
@@ -161,13 +125,4 @@ fun TripCard(
         }
     }
     Spacer(Modifier.height(32.dp))
-}
-
-@Preview(showBackground = true, backgroundColor = 0xFFF5F5F5)
-@Composable
-fun HomeScreenPreview() {
-    MaterialTheme {
-        val navController = rememberNavController()
-        HomeScreen(navController = navController)
-    }
 }
