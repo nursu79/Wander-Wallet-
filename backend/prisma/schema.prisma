@@ -13,30 +13,32 @@ datasource db {
 model User {
   id            String         @id @default(cuid())
   username      String
-  email         String        @unique
+  email         String         @unique
   password      String
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   trips         Trip[]
   refreshTokens RefreshToken[]
   avatarUrl     String?
+  notifications Notification[]
 
   @@index([email])
 }
 
 model Trip {
-  id          String    @id @default(cuid())
-  name        String
-  destination String
-  budget      Float
-  startDate   DateTime
-  endDate     DateTime
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  userId      String
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  expenses    Expense[]
-  imgUrl      String?
+  id            String         @id @default(cuid())
+  name          String
+  destination   String
+  budget        Float
+  startDate     DateTime
+  endDate       DateTime
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  userId        String
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expenses      Expense[]
+  imgUrl        String?
+  notifications Notification[]
 
   @@index([startDate, endDate, userId])
 }
@@ -77,10 +79,18 @@ model RefreshToken {
 }
 
 model BlackListToken {
-  id        String   @id @default(cuid())
-  accessToken     String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id @default(cuid())
+  accessToken String   @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   @@index([accessToken])
+}
+
+model Notification {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tripId String
+  trip   Trip   @relation(fields: [tripId], references: [id], onDelete: Cascade)
 }

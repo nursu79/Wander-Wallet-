@@ -366,4 +366,18 @@ export default class UserController {
             message: "User logged out successfully"
         });
     }
+
+    static async getNotifications(req: Request, res: Response) {
+        const user = getUser(req);
+
+        const notifications = await prisma.notification.findMany({
+            where: {
+                userId: user?.id
+            }
+        });
+
+        return res.status(200).json({
+            notifications
+        });
+    }
 }

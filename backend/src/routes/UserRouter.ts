@@ -47,6 +47,15 @@ userRouter.post("/logout",
     (req, res) => {
         UserController.logoutUser(req, res);
     }
+);
+
+userRouter.get("/notifications",
+    (req, res, next) => {
+        authenticateToken(req, res, next);
+    },
+    (req, res) => {
+        UserController.getNotifications(req, res);
+    }
 )
 
 export default userRouter;

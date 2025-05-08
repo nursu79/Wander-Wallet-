@@ -57,6 +57,24 @@ export default class ExpenseController {
             }
         });
 
+        const tripExpenses = await prisma.expense.aggregate({
+            where: {
+                tripId: trip.id
+            },
+            _sum: {
+                amount: true
+            }
+        });
+
+        if (user && tripExpenses._sum.amount && (tripExpenses._sum.amount > trip.budget)) {
+            await prisma.notification.create({
+                data: {
+                    userId: user.id,
+                    tripId: trip.id
+                }
+            });
+        }
+
         return res.status(201).json({
             expense: newExpense
         });
@@ -185,6 +203,9 @@ export default class ExpenseController {
                         category: category,
                         date: dateDate,
                         notes: notes
+                    },
+                    include: {
+                        trip: true
                     }
                 });
             } else {
@@ -200,8 +221,28 @@ export default class ExpenseController {
                         amount: amountNumber,
                         category: category,
                         date: dateDate,
+                    },
+                    include: {
+                        trip: true
                     }
                 });                
+            }
+            const tripExpenses = await prisma.expense.aggregate({
+                where: {
+                    tripId: updatedExpense.tripId
+                },
+                _sum: {
+                    amount: true
+                }
+            });
+    
+            if (user && tripExpenses._sum.amount && (tripExpenses._sum.amount > updatedExpense.trip.budget)) {
+                await prisma.notification.create({
+                    data: {
+                        userId: user.id,
+                        tripId: updatedExpense.trip.id
+                    }
+                });
             }
 
             return res.status(200).json({
