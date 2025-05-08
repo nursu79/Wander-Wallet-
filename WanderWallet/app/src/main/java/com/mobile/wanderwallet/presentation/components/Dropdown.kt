@@ -32,155 +32,6 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-
-//
-//import androidx.compose.foundation.layout.Box
-//import androidx.compose.foundation.layout.Column
-//import androidx.compose.foundation.layout.fillMaxWidth
-//import androidx.compose.foundation.layout.padding
-//import androidx.compose.material.icons.Icons
-//import androidx.compose.material.icons.filled.ArrowDropDown
-//import androidx.compose.material.icons.filled.ArrowDropUp
-//import androidx.compose.material3.DropdownMenu
-//import androidx.compose.material3.DropdownMenuItem
-//import androidx.compose.material3.Icon
-//import androidx.compose.material3.MaterialTheme
-//import androidx.compose.material3.OutlinedButton
-//import androidx.compose.material3.Text
-//import androidx.compose.runtime.Composable
-//import androidx.compose.runtime.getValue
-//import androidx.compose.runtime.mutableStateOf
-//import androidx.compose.runtime.remember
-//import androidx.compose.runtime.setValue
-//import androidx.compose.ui.Modifier
-//import androidx.compose.ui.text.style.TextAlign
-//import androidx.compose.ui.unit.dp
-//
-//@Composable
-//fun UniversalDropdown(
-//    items: List<String>,
-//    selectedItem: String?,
-//    onItemSelected: (String) -> Unit,
-//    modifier: Modifier = Modifier,
-//    label: String = "",
-//    placeholder: String = "Select",
-//    enabled: Boolean = true,
-//
-//) {
-//    var expanded by remember { mutableStateOf(false) }
-//
-//    Column(modifier = modifier) {
-//        if (label.isNotEmpty()) {
-//            Text(
-//                text = label,
-//                style = MaterialTheme.typography.labelMedium,
-//                modifier = Modifier.padding(bottom = 4.dp)
-//            )
-//        }
-//
-//        Box {
-//            OutlinedButton(
-//                onClick = { expanded = true },
-//                modifier = Modifier.fillMaxWidth(),
-//                enabled = enabled
-//            ) {
-//                Text(
-//                    text = selectedItem ?: placeholder,
-//                    modifier = Modifier.weight(1f),
-//                    textAlign = TextAlign.Start
-//                )
-//                Icon(
-//                    imageVector = if (expanded) Icons.Default.ArrowDropUp
-//                    else Icons.Default.ArrowDropDown,
-//                    contentDescription = "Dropdown arrow"
-//                )
-//            }
-//
-//            DropdownMenu(
-//                expanded = expanded && enabled,
-//                onDismissRequest = { expanded = false },
-//                modifier = Modifier.fillMaxWidth(0.9f)
-//            ) {
-//                items.forEach { item ->
-//                    DropdownMenuItem(
-//                        text = { Text(item) },
-//                        onClick = {
-//                            onItemSelected(item)
-//                            expanded = false
-//                        }
-//                    )
-//                }
-//            }
-//        }
-//    }
-//}
-
-//@Composable
-//fun Dropdown(
-//    items: List<String>,
-//    selectedItem: String?,
-//    onItemSelected: (String) -> Unit,
-//    modifier: Modifier = Modifier,
-//    label: String = "",
-//    placeholder: String = "Select"
-//) {
-//    var expanded by remember { mutableStateOf(false) }
-//
-//    // This box will contain both the fake textfield and the dropdown
-//    Box(modifier = modifier) {
-//        // This creates the textfield appearance
-//        OutlinedTextField(
-//            value = selectedItem ?: "",
-//            onValueChange = {},
-//            label = { if (label.isNotEmpty()) Text(label) },
-//            placeholder = { Text(placeholder) },
-//            modifier = Modifier.fillMaxWidth(),
-//            readOnly = true,
-//            trailingIcon = {
-//                Icon(
-//                    imageVector = if (expanded) Icons.Default.ArrowDropUp
-//                    else Icons.Default.ArrowDropDown,
-//                    contentDescription = "Dropdown arrow"
-//                )
-//            },
-//            colors = OutlinedTextFieldDefaults.colors(
-//                focusedContainerColor = Color(0xFFFAFAFA),
-//                unfocusedContainerColor = Color(0xFFFAFAFA),
-//                focusedBorderColor = Color(0xFF664EA4)
-//
-//            )
-//        )
-//
-//        Button(
-//            onClick = { expanded = true },
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .height(56.dp) // Standard TextField height
-//                .alpha(0f), // Make completely transparent
-//            colors = ButtonDefaults.buttonColors(
-//                containerColor = Color.Transparent,
-//                contentColor = Color.Transparent
-//            )
-//        ) {}
-//
-//        // The dropdown menu
-//        DropdownMenu(
-//            expanded = expanded,
-//            onDismissRequest = { expanded = false },
-//            modifier = Modifier.fillMaxWidth(0.9f)
-//        ) {
-//            items.forEach { item ->
-//                DropdownMenuItem(
-//                    text = { Text(item) },
-//                    onClick = {
-//                        onItemSelected(item)
-//                        expanded = false
-//                    }
-//                )
-//            }
-//        }
-//    }
-//}
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Dropdown(
@@ -192,14 +43,11 @@ fun Dropdown(
     placeholder: String = "Select",
     enabled: Boolean = true,
     cornerRadius: Dp = 12.dp,
-//    labelFontSize: TextUnit = 16.sp,
-//    labelFontWeight: FontWeight = FontWeight.Bold,
     itemFontSize: TextUnit = 16.sp
 ) {
     var expanded by remember { mutableStateOf(false) }
 
     Column(modifier = modifier) {
-        // Permanent label (always visible)
         if (label.isNotEmpty()) {
             Text(
                 text = label,
