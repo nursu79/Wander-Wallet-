@@ -80,6 +80,7 @@ fun getScreenFromRoute(route: String?): MainContentScreen {
         route == MainContentScreen.TripsScreen.route -> MainContentScreen.TripsScreen
         route == MainContentScreen.CreateTripScreen.route -> MainContentScreen.CreateTripScreen
         (route?.startsWith("trips/") ?: false) -> MainContentScreen.TripDetailsScreen
+        (route?.startsWith("addExpense/") ?: false) -> MainContentScreen.AddExpenseScreen
         else -> MainContentScreen.TripsScreen
     }
 }
@@ -245,6 +246,24 @@ fun MainContentNavigation(
                 CreateTripScreen(
                     onSuccess = {
                         navController.navigate(MainContentScreen.TripDetailsScreen.createRoute(it))
+                    },
+                    onLoggedOut = onLoggedOut
+                )
+            }
+
+            composable(
+                route = MainContentScreen.AddExpenseScreen.route,
+                arguments = listOf(navArgument("tripId") { type = NavType.StringType })
+            ) { backStackEnt ->
+                val tripId = backStackEnt.arguments?.getString("tripId") ?: ""
+
+                AddExpenseScreen(
+                    onSuccess = {
+                        navController.navigate(MainContentScreen.TripDetailsScreen.createRoute(tripId)) {
+                            popUpTo(MainContentScreen.AddExpenseScreen.createRoute(tripId)) {
+                                inclusive = true
+                            }
+                        }
                     },
                     onLoggedOut = onLoggedOut
                 )

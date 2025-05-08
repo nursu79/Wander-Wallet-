@@ -10,7 +10,6 @@ import com.mobile.wanderwallet.data.model.MessageError
 import com.mobile.wanderwallet.data.model.MessagePayload
 import com.mobile.wanderwallet.data.model.Result
 import com.mobile.wanderwallet.data.model.TripPayload
-import com.mobile.wanderwallet.data.model.TripsPayload
 import com.mobile.wanderwallet.data.repository.WanderWalletApiRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch

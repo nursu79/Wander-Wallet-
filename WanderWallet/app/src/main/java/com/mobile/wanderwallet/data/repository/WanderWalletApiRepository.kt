@@ -30,7 +30,6 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.HttpException
 import java.io.IOException
-import java.util.Date
 
 interface WanderWalletApiRepository {
 
@@ -50,7 +49,7 @@ interface WanderWalletApiRepository {
     suspend fun logoutUser(retry: Boolean = true): Result<MessagePayload, TokensError>
 
     // Trip
-    suspend fun createTrip(name: String, destination: String, budget: String, startDate: Date, endDate: Date, tripImageUri: Uri? = null, contentResolver: ContentResolver? = null, retry: Boolean = true): Result<TripPayload, TripError>
+    suspend fun createTrip(name: String, destination: String, budget: String, startDate: String, endDate: String, tripImageUri: Uri? = null, contentResolver: ContentResolver? = null, retry: Boolean = true): Result<TripPayload, TripError>
 
     suspend fun getTrips(retry: Boolean = true): Result<TripsPayload, MessageError>
 
@@ -64,16 +63,16 @@ interface WanderWalletApiRepository {
 
     suspend fun deleteTrip(id: String, retry: Boolean = true): Result<MessagePayload, MessageError>
 
-    suspend fun updateTrip(id: String, name: String, destination: String, budget: String, startDate: Date, endDate: Date, tripImageUri: Uri? = null, contentResolver: ContentResolver? = null, retry: Boolean = true): Result<TripPayload, TripError>
+    suspend fun updateTrip(id: String, name: String, destination: String, budget: String, startDate: String, endDate: String, tripImageUri: Uri? = null, contentResolver: ContentResolver? = null, retry: Boolean = true): Result<TripPayload, TripError>
 
     // Expenses
-    suspend fun createExpense(tripId: String, name: String, amount: String, category: Category, date: Date, notes: String?, retry: Boolean = true): Result<ExpensePayload, ExpenseError>
+    suspend fun createExpense(tripId: String, name: String, amount: String, category: Category, date: String, notes: String?, retry: Boolean = true): Result<ExpensePayload, ExpenseError>
 
     suspend fun getTripExpenses(tripId: String, retry: Boolean = true): Result<ExpensesPayload, MessageError>
 
     suspend fun getExpense(id: String, retry: Boolean = true): Result<ExpensePayload, MessageError>
 
-    suspend fun updateExpense(id: String, name: String, amount: String, category: Category, date: Date, notes: String?, retry: Boolean = true): Result<ExpensePayload, ExpenseError>
+    suspend fun updateExpense(id: String, name: String, amount: String, category: Category, date: String, notes: String?, retry: Boolean = true): Result<ExpensePayload, ExpenseError>
 
     suspend fun deleteExpense(id: String, retry: Boolean = true): Result<MessagePayload, MessageError>
 
@@ -335,8 +334,8 @@ class NetworkWanderWalletApiRepository(
         name: String,
         destination: String,
         budget: String,
-        startDate: Date,
-        endDate: Date,
+        startDate: String,
+        endDate: String,
         tripImageUri: Uri?,
         contentResolver: ContentResolver?,
         retry: Boolean
@@ -344,8 +343,8 @@ class NetworkWanderWalletApiRepository(
         val namePart = name.toRequestBody("text/plain".toMediaType())
         val destinationPart = destination.toRequestBody("text/plain".toMediaType())
         val budgetPart = budget.toRequestBody("text/plain".toMediaType())
-        val startDatePart = startDate.toString().toRequestBody("text/plain".toMediaType())
-        val endDatePart = endDate.toString().toRequestBody("text/plain".toMediaType())
+        val startDatePart = startDate.toRequestBody("text/plain".toMediaType())
+        val endDatePart = endDate.toRequestBody("text/plain".toMediaType())
         var tripImagePart: MultipartBody.Part? = null
 
         if (tripImageUri != null && contentResolver != null) {
@@ -608,8 +607,8 @@ class NetworkWanderWalletApiRepository(
         name: String,
         destination: String,
         budget: String,
-        startDate: Date,
-        endDate: Date,
+        startDate: String,
+        endDate: String,
         tripImageUri: Uri?,
         contentResolver: ContentResolver?,
         retry: Boolean
@@ -617,8 +616,8 @@ class NetworkWanderWalletApiRepository(
         val namePart = name.toRequestBody("text/plain".toMediaType())
         val destinationPart = destination.toRequestBody("text/plain".toMediaType())
         val budgetPart = budget.toRequestBody("text/plain".toMediaType())
-        val startDatePart = startDate.toString().toRequestBody("text/plain".toMediaType())
-        val endDatePart = endDate.toString().toRequestBody("text/plain".toMediaType())
+        val startDatePart = startDate.toRequestBody("text/plain".toMediaType())
+        val endDatePart = endDate.toRequestBody("text/plain".toMediaType())
         var tripImagePart: MultipartBody.Part? = null
 
         if (tripImageUri != null && contentResolver != null) {
@@ -693,7 +692,7 @@ class NetworkWanderWalletApiRepository(
         name: String,
         amount: String,
         category: Category,
-        date: Date,
+        date: String,
         notes: String?,
         retry: Boolean
     ): Result<ExpensePayload, ExpenseError> {
@@ -805,7 +804,7 @@ class NetworkWanderWalletApiRepository(
         name: String,
         amount: String,
         category: Category,
-        date: Date,
+        date: String,
         notes: String?,
         retry: Boolean
     ): Result<ExpensePayload, ExpenseError> {

@@ -10,6 +10,9 @@ import androidx.compose.material.icons.filled.ShoppingBag
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.mobile.wanderwallet.data.model.Category
 import com.mobile.wanderwallet.data.model.Expense
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 fun getIconForCategory(category: Category): ImageVector {
     return when (category) {
@@ -24,4 +27,9 @@ fun getIconForCategory(category: Category): ImageVector {
 
 fun getExpensesByCategory(expenses: List<Expense>?, category: Category): List<Expense> {
     return expenses?.filter { expense -> expense.category == category } ?: listOf()
+}
+
+fun convertMillisToDate(millis: Long): String {
+    val formatter = SimpleDateFormat("MM/dd/yyyy", Locale.getDefault())
+    return formatter.format(millis)
 }

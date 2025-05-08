@@ -28,7 +28,7 @@ data class CreateExpenseRequest(
     val name: String,
     val amount: String,
     val category: Category,
-    val date: Date,
+    val date: String,
     val notes: String?
 )
 
