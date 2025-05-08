@@ -53,6 +53,7 @@ fun EditExpense() {
             onValueChange = { title = it},
             errorMessage = titleError
         )
+        Spacer(Modifier.height(16.dp))
         FormField(
             "Amount",
             "0.0",
@@ -60,6 +61,7 @@ fun EditExpense() {
             onValueChange = { amount = it},
             errorMessage = amountError
         )
+        Spacer(Modifier.height(16.dp))
         Dropdown(
             items = currencies,
             selectedValue = selectedCurrency,
@@ -68,6 +70,7 @@ fun EditExpense() {
             placeholder = "USD",
             modifier = Modifier.fillMaxWidth()
         )
+        Spacer(Modifier.height(16.dp))
         Dropdown(
             items = categories,
             selectedValue = selectedCategory,
@@ -76,6 +79,7 @@ fun EditExpense() {
             placeholder = "choose currency",
             modifier = Modifier.fillMaxWidth()
         )
+        Spacer(Modifier.height(16.dp))
         DatePickerField(
             label = "Date",
             selectedDate = selectedDate,
@@ -84,6 +88,7 @@ fun EditExpense() {
             },
             modifier = Modifier.fillMaxWidth()
         )
+        Spacer(Modifier.height(16.dp))
         FormField(
             "Note",
             "Add your note",
@@ -91,6 +96,7 @@ fun EditExpense() {
             onValueChange = { title = it},
             errorMessage = noteError
         )
+        Spacer(Modifier.height(16.dp))
         Row(
             modifier = Modifier
                 .fillMaxWidth()
