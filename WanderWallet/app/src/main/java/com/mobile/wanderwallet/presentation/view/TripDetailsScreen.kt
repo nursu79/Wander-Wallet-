@@ -18,7 +18,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
@@ -39,13 +38,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mobile.wanderwallet.R
+import com.mobile.wanderwallet.presentation.components.RectangularButton
 
 data class Expense(
     val category: String,
@@ -71,7 +71,6 @@ fun TripDetailsScreen(
         Column(
             modifier = modifier
                 .fillMaxSize()
-                .padding(16.dp)
         ) {
             BudgetSummarySection(
                 totalBudget = 3000,
@@ -80,6 +79,36 @@ fun TripDetailsScreen(
             )
 
             Spacer(modifier = Modifier.height(20.dp))
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    RectangularButton(
+                        onClick = {},
+                        modifier = Modifier.weight(0.4f),
+                        color = Color(0xFF449494)
+                    ) {
+                        Text("Edit")
+                    }
+
+                    Spacer(Modifier.width(16.dp))
+
+                    RectangularButton(
+                        onClick = {},
+                        modifier = Modifier.weight(0.4f),
+                        color = Color.Red
+                    ) {
+                        Text("Delete")
+                    }
+                }
+            }
 
             if (showDetails && selectedExpense != null) {
                 ExpenseDetailSection(
@@ -88,7 +117,7 @@ fun TripDetailsScreen(
                     onLoggedOut = onLoggedOut
                 )
             } else {
-                Column {
+                Column(Modifier.padding(16.dp)) {
                     Text(
                         text = "Expenses",
                         style = MaterialTheme.typography.headlineSmall,
@@ -105,21 +134,21 @@ fun TripDetailsScreen(
                 }
             }
         }
-
-        FloatingActionButton(
-            onClick = {  },
-            containerColor = Color(0xFF449494),
-            modifier = Modifier.size(100.dp).align(Alignment.BottomEnd).padding(20.dp),
-            shape = CircleShape,
-        ) {
-            Icon(
-                imageVector = Icons.Default.Add,
-                "Add",
-                tint = Color.White
-            )
+        if(!showDetails) {
+            FloatingActionButton(
+                onClick = {  },
+                containerColor = Color(0xFF449494),
+                modifier = Modifier.size(100.dp).align(Alignment.BottomEnd).padding(20.dp),
+                shape = CircleShape,
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    "Add",
+                    tint = Color.White
+                )
+            }
         }
     }
-
 }
 
 @Composable
@@ -129,65 +158,145 @@ fun ExpenseDetailSection(
     onLoggedOut: () -> Unit
 ) {
     Column {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp)
-        ) {
-            TextButton(
-                onClick = onBack,
-                modifier = Modifier.padding(end = 8.dp)
-            ) {
-                Icon(
-                    Icons.Default.Close,
-                    contentDescription = "Minimize",
-                    modifier = Modifier.size(20.dp)
-                )
-                Spacer(modifier = Modifier.width(4.dp))
-                Text("Minimize")
-            }
-
-            Text(
-                text = expense.category,
-                style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier.weight(1f),
-                textAlign = TextAlign.Center
-            )
-
-            IconButton(
-                onClick = onLoggedOut,
-                modifier = Modifier.size(48.dp)
-            ) {
-                Icon(
-                    Icons.AutoMirrored.Filled.Logout,
-                    contentDescription = "Logout",
-                    tint = MaterialTheme.colorScheme.primary
-                )
-            }
-        }
-
         Card(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                .fillMaxSize()
+                .shadow(
+                    elevation = 24.dp,
+                    shape = MaterialTheme.shapes.medium,
+                    ambientColor = Color.Black.copy(alpha = 0.1f),
+                    spotColor = Color.Black.copy(alpha = 0.2f)
+                ),
+            colors = CardDefaults.cardColors(
+                containerColor = Color.White
+            ),
+            shape = MaterialTheme.shapes.medium,
+            elevation = CardDefaults.cardElevation(0.dp)
         ) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text(
-                    text = "Details",
-                    style = MaterialTheme.typography.headlineSmall,
-                    modifier = Modifier.padding(bottom = 8.dp)
+            Spacer(Modifier.height(8.dp))
+            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                Image(
+                    painter = painterResource(id = R.drawable.line),
+                    contentDescription = "minimize",
+                    modifier = Modifier
+                        .fillMaxWidth(0.4f)
+                        .height(4.dp)
+                        .background(Color.Gray)
+                        .padding(vertical = 10.dp),
+
+                    contentScale = ContentScale.Crop
                 )
-                BudgetRow(label = "Amount", value = "$${expense.amount}")
-                Spacer(modifier = Modifier.height(8.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
+            }
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)
+            ) {
+                TextButton(
+                    onClick = onBack,
+                    modifier = Modifier.padding(end = 8.dp)
                 ) {
+                    Icon(
+                        Icons.Default.Close,
+                        contentDescription = "Minimize",
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text("Minimize")
+                }
+
+                IconButton(
+                    onClick = onLoggedOut,
+                    modifier = Modifier.size(48.dp)
+                ) {
+                    Icon(
+                        Icons.AutoMirrored.Filled.Logout,
+                        contentDescription = "Logout",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
+
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = Color.White
+                ),
+                elevation = CardDefaults.cardElevation(0.dp)
+            ) {
+                Column(modifier = Modifier.padding(24.dp)) {
                     ExpenseIcon(category = expense.category)
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = "Category: ${expense.category}")
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Column {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                        ) {
+                            Text(
+                                text = expense.category,
+                                modifier = Modifier.padding(bottom = 8.dp)
+                            )
+                            Text(
+                                text = (expense.amount * 0.3).toString() + "$"
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                        ) {
+                            Text(
+                                text = expense.category,
+                                modifier = Modifier.padding(bottom = 8.dp)
+                            )
+                            Text(
+                                text = (expense.amount * 0.3).toString() + "$"
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                        ) {
+                            Text(
+                                text = expense.category,
+                                modifier = Modifier.padding(bottom = 8.dp)
+                            )
+                            Text(
+                                text = (expense.amount * 0.3).toString() + "$"
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                        ) {
+                            Text(
+                                text = expense.category,
+                                modifier = Modifier.padding(bottom = 8.dp)
+                            )
+                            Text(
+                                text = (expense.amount * 0.3).toString() + "$"
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
                 }
             }
         }
@@ -208,7 +317,6 @@ fun ExpenseCardsSection(
             Spacer(modifier = Modifier.height(16.dp))
         }
     }
-
 }
 
 @Composable
@@ -240,17 +348,12 @@ fun ExpenseCard(expense: Expense, onClick: () -> Unit) {
                 text = "$${expense.amount}",
                 style = MaterialTheme.typography.bodyMedium
             )
-//            Icon(
-//                Icons.AutoMirrored.Filled.ArrowForward,
-//                contentDescription = "View details",
-//                modifier = Modifier.size(24.dp)
-//            )
         }
     }
 }
 
 @Composable
-fun ExpenseIcon(category: String) {
+fun ExpenseIcon(category: String, modifier: Modifier = Modifier) {
     val iconRes = when (category) {
         "Travel" -> R.drawable.travel
         else -> R.drawable.food
@@ -334,30 +437,4 @@ fun BudgetRow(label: String, value: String) {
         Text(text = label)
         Text(text = value)
     }
-}
-
-@Composable
-fun MyFloatingActionButton(onClick: () -> Unit) {
-    FloatingActionButton(
-        onClick = onClick,
-        containerColor = Color(0xFF6200EE),
-        modifier = Modifier.size(56.dp) // Standard FAB size
-    ) {
-        Icon(
-            imageVector = Icons.Default.Add,
-            "Add"
-        )
-    }
-}
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun TripDetailsScreenPreview() {
-//    MaterialTheme {
-//
-//    }
-    TripDetailsScreen(
-        id = "test123",
-        onLoggedOut = { /* Do nothing for preview */ }
-    )
 }
