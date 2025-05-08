@@ -1,4 +1,4 @@
-package com.app.pro.component
+package com.mobile.wanderwallet.presentation.view
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
