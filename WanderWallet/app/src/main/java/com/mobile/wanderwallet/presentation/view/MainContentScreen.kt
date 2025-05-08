@@ -63,7 +63,8 @@ sealed class MainContentScreen(val route: String, val title: String, val subStri
     }
     data object CreateTripScreen: MainContentScreen(route = "createTrip", title = "Where to next?", subString = "Start planning for the trip!")
     data object ProfileScreen: MainContentScreen(route = "profile", title = "Your profile")
-    data object SummaryScreen: MainContentScreen(route = "summary", title = "Summary")
+    data object SummaryScreen: MainContentScreen(route = "summary", title = "Your Notfication")
+    data object NotificationScreen: MainContentScreen(route = "notfication", title = "Summary")
     data object EditTripScreen: MainContentScreen(route = "editTrip/{tripId}", title = "Edit Trip") {
         fun createRoute(id: String) = "editTrip/$id"
     }
