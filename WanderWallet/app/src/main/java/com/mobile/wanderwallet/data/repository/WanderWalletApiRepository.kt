@@ -12,6 +12,7 @@ import com.mobile.wanderwallet.data.model.ExpensesPayload
 import com.mobile.wanderwallet.data.model.LoginRequest
 import com.mobile.wanderwallet.data.model.MessageError
 import com.mobile.wanderwallet.data.model.MessagePayload
+import com.mobile.wanderwallet.data.model.NotificationsPayload
 import com.mobile.wanderwallet.data.model.RefreshTokenRequest
 import com.mobile.wanderwallet.data.model.Result
 import com.mobile.wanderwallet.data.model.TokensError
@@ -43,6 +44,8 @@ interface WanderWalletApiRepository {
     suspend fun getProfile(retry: Boolean = true): Result<UserPayload, MessageError>
 
     suspend fun updateProfile(username: String, avatarUri: Uri? = null, contentResolver: ContentResolver? = null, retry: Boolean = true): Result<UserPayload, UserError>
+
+    suspend fun getNotifications(retry: Boolean = true): Result<NotificationsPayload, MessageError>
 
     suspend fun logoutUser(retry: Boolean = true): Result<MessagePayload, TokensError>
 
@@ -251,6 +254,39 @@ class NetworkWanderWalletApiRepository(
             }
         } catch (e: IOException) {
             Result.Error(UserError(message = "Check your internet connection or the API address"))
+        }
+    }
+
+    override suspend fun getNotifications(retry: Boolean): Result<NotificationsPayload, MessageError> {
+        return try {
+            val response = wanderWalletApiService.getNotifications()
+
+            Result.Success(response)
+        } catch (e: HttpException) {
+            if (e.code() == 401) {
+                if (retry) {
+                    try {
+                        refreshToken()
+                        getNotifications(retry = false)
+                    } catch (e: HttpException) {
+                        Result.Error(MessageError("Please login and continue"), loggedOut = true)
+                    } catch (e: IOException) {
+                        Result.Error(MessageError("Check your internet connection or the API address"))
+                    }
+                } else {
+                    Result.Error(MessageError("Please login and continue"), loggedOut = true)
+                }
+            } else {
+                try {
+                    val errorBody = e.response()?.errorBody()
+                    val errorResponse = gson.fromJson(errorBody?.string(), MessageError::class.java)
+                    Result.Error(errorResponse, loggedOut = true)
+                } catch (e: Throwable) {
+                    Result.Error(MessageError("An unexpected error occurred"))
+                }
+            }
+        } catch (e: IOException) {
+            Result.Error(MessageError("Check your internet connection or the API address"))
         }
     }
 

@@ -32,7 +32,11 @@ data class CreateExpenseRequest(
     val notes: String?
 )
 
+data class Amount(
+    val amount: Float
+)
+
 data class ExpenseByCategory(
     val category: Category,
-    @SerializedName("_sum") val amount: Float?
+    @SerializedName("_sum") val sum: Amount
 )

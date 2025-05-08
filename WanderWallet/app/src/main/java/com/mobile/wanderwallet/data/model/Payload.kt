@@ -21,7 +21,7 @@ data class UserAndTokensPayload(
 
 data class TripPayload(
     val trip: Trip?,
-    val totalExpenditure: Float?,
+    val totalExpenditure: Float? = 0f,
     val expensesByCategory: List<ExpenseByCategory>
 )
 
@@ -35,6 +35,10 @@ data class ExpensePayload(
 
 data class ExpensesPayload(
     val expenses: List<Expense>
+)
+
+data class NotificationsPayload(
+    val notifications: List<Notification>
 )
 
 data class TotalSpending(
@@ -54,7 +58,6 @@ data class CategorySpending(
     val category: Category,
     val amount: Float
 )
-
 
 data class SpendingByMonth(
     val expensesByMonth: List<Map<String, Float>>

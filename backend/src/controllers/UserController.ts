@@ -229,6 +229,9 @@ export default class UserController {
             },
             omit: {
                 password: true,
+            },
+            include: {
+                notifications: true
             }
         });
 
@@ -373,6 +376,9 @@ export default class UserController {
         const notifications = await prisma.notification.findMany({
             where: {
                 userId: user?.id
+            },
+            include: {
+                trip: true
             }
         });
 

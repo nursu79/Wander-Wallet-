@@ -7,6 +7,7 @@ import com.mobile.wanderwallet.data.model.ExpensePayload
 import com.mobile.wanderwallet.data.model.ExpensesPayload
 import com.mobile.wanderwallet.data.model.LoginRequest
 import com.mobile.wanderwallet.data.model.MessagePayload
+import com.mobile.wanderwallet.data.model.NotificationsPayload
 import com.mobile.wanderwallet.data.model.RefreshTokenRequest
 import com.mobile.wanderwallet.data.model.SpendingByCategory
 import com.mobile.wanderwallet.data.model.SpendingByMonth
@@ -53,6 +54,9 @@ interface WanderWalletApiService {
         @Part("username") username: RequestBody,
         @Part avatar: MultipartBody.Part? = null
     ): UserPayload
+
+    @GET
+    suspend fun getNotifications(): NotificationsPayload
 
     @POST("/logout")
     suspend fun logoutUser(@Body requestBody: RefreshTokenRequest): MessagePayload

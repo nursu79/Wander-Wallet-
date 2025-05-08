@@ -58,13 +58,21 @@ import com.mobile.wanderwallet.presentation.viewmodel.MainContentScreenViewModel
 
 sealed class MainContentScreen(val route: String, val title: String, val subString: String? = null) {
     data object TripsScreen: MainContentScreen(route = "trips", title = "Trips", subString = "Explore your trips")
-    data object TripDetailsScreen: MainContentScreen(route = "trips/{id}", title = "Trip Details") {
+    data object TripDetailsScreen: MainContentScreen(route = "trips/{tripId}", title = "Trip Details") {
         fun createRoute(id: String) = "trips/$id"
     }
     data object CreateTripScreen: MainContentScreen(route = "createTrip", title = "Where to next?", subString = "Start planning for the trip!")
     data object ProfileScreen: MainContentScreen(route = "profile", title = "Your profile")
     data object SummaryScreen: MainContentScreen(route = "summary", title = "Summary")
-
+    data object EditTripScreen: MainContentScreen(route = "editTrip/{tripId}", title = "Edit Trip") {
+        fun createRoute(id: String) = "editTrip/$id"
+    }
+    data object ExpenseDetailsScreen: MainContentScreen(route = "expenses/{expenseId}", title = "Expense Details") {
+        fun createRoute(id: String) = "expenses/$id"
+    }
+    data object AddExpenseScreen: MainContentScreen(route = "addExpense/{tripId}", title = "Add Expense") {
+        fun createRoute(id: String) = "addExpense/$id"
+    }
 }
 
 fun getScreenFromRoute(route: String?): MainContentScreen {
@@ -207,11 +215,26 @@ fun MainContentNavigation(
 
             composable(
                 route = MainContentScreen.TripDetailsScreen.route,
-                arguments = listOf(navArgument("id") { type = NavType.StringType })
+                arguments = listOf(navArgument("tripId") { type = NavType.StringType })
             ) { backStackEnt ->
-                val tripId = backStackEnt.arguments?.getString("id") ?: ""
+                val tripId = backStackEnt.arguments?.getString("tripId") ?: ""
                 TripDetailsScreen(
-                    id = tripId,
+                    onEditClick = {
+                        navController.navigate(MainContentScreen.EditTripScreen.createRoute(tripId))
+                    },
+                    onDeleteClick = {
+                        navController.navigate(MainContentScreen.TripsScreen) {
+                            popUpTo(MainContentScreen.TripDetailsScreen.createRoute(tripId)) {
+                                inclusive = true
+                            }
+                        }
+                    },
+                    onAddExpenseClick = {
+                        navController.navigate(MainContentScreen.AddExpenseScreen.createRoute(tripId))
+                    },
+                    onExpenseClick = {
+                        navController.navigate(MainContentScreen.ExpenseDetailsScreen.createRoute(it))
+                    },
                     onLoggedOut = onLoggedOut
                 )
             }

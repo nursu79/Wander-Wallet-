@@ -8,7 +8,8 @@ data class User(
     val email: String,
     val createdAt: Date,
     val updatedAt: Date,
-    val avatarUrl: String?
+    val avatarUrl: String?,
+    val notifications: List<Notification>?
 )
 
 data class LoginRequest(
