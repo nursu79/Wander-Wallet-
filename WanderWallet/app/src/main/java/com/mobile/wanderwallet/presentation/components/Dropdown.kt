@@ -51,8 +51,9 @@ fun Dropdown(
         if (label.isNotEmpty()) {
             Text(
                 text = label,
+                fontSize = 13.sp,
                 style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                color = Color.Black,
                 modifier = Modifier.padding(bottom = 4.dp)
             )
         }
