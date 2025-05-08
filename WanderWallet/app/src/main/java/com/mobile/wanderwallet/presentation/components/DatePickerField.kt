@@ -1,6 +1,7 @@
 package com.mobile.wanderwallet.presentation.components
 
-import android.content.Context
+import android.app.DatePickerDialog
+import android.widget.DatePicker
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -10,8 +11,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.fragment.app.FragmentActivity
-import com.google.android.material.datepicker.MaterialDatePicker
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -23,14 +22,31 @@ fun DatePickerField(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    val datePicker = remember { MaterialDatePicker.Builder.datePicker().build() }
 
-    datePicker.addOnPositiveButtonClickListener {
-        val formattedDate = SimpleDateFormat("MM/dd/yyyy", Locale.getDefault())
-            .format(Date(it))
-        onDateSelected(formattedDate)
+    // Store the current date for default value
+    val calendar = remember { Calendar.getInstance() }
+
+    // Open the DatePickerDialog when icon is clicked
+    val openDatePicker = {
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH)
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+        DatePickerDialog(
+            context,
+            { _: DatePicker, selectedYear: Int, selectedMonth: Int, selectedDay: Int ->
+                calendar.set(selectedYear, selectedMonth, selectedDay)
+                val formattedDate = SimpleDateFormat("MM/dd/yyyy", Locale.getDefault()).format(calendar.time)
+                onDateSelected(formattedDate)
+            },
+            year, month, day
+        ).apply {
+            // Optional: You can style the dialog here if needed
+            show()
+        }
     }
 
+    // The text field with calendar icon
     OutlinedTextField(
         value = selectedDate.ifEmpty { "Select $label" },
         onValueChange = {},
@@ -38,27 +54,22 @@ fun DatePickerField(
         label = { Text(label) },
         trailingIcon = {
             IconButton(
-                onClick = { showDatePicker(context, datePicker) },
+                onClick = {openDatePicker()},
                 modifier = Modifier.size(24.dp)
             ) {
                 Icon(
                     imageVector = Icons.Default.CalendarToday,
-                    contentDescription = "Select date"
+                    contentDescription = "Select $label",
+                    tint = MaterialTheme.colorScheme.primary
                 )
             }
         },
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = MaterialTheme.colorScheme.primary,
-            unfocusedBorderColor = MaterialTheme.colorScheme.outline
+            unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+            focusedLabelColor = MaterialTheme.colorScheme.primary,
+            unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant
         ),
         modifier = modifier.fillMaxWidth()
     )
-}
-
-private fun showDatePicker(context: Context, picker: MaterialDatePicker<Long>) {
-    if (context is FragmentActivity) {
-        if (!picker.isAdded) {
-            picker.show(context.supportFragmentManager, picker.toString())
-        }
-    }
 }
