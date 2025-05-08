@@ -107,16 +107,14 @@ fun EditTripScreen(
                 "Trip Name",
                 "Edit trip name",
                 tripName,
-                { tripName = it },
-                null,
+                { tripName = it }
 
                 )
             FormField(
                 "Destination",
                 "Edit destination",
                 destination,
-                { destination = it },
-                null,
+                { destination = it }
 
                 )
             FormField(

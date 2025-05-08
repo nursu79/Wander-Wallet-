@@ -1,23 +1,26 @@
 package com.mobile.wanderwallet.presentation.view
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Archive
 import androidx.compose.material.icons.filled.HourglassTop
 import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.material.icons.outlined.Archive
 import androidx.compose.material.icons.outlined.HourglassTop
 import androidx.compose.material.icons.outlined.PlayCircle
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Tab
@@ -48,6 +51,7 @@ data class TabItem(
 @Composable
 fun TripsScreen(
     onTripClick: (String) -> Unit,
+    onCreateTripClick: () -> Unit,
     onLoggedOut: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: TripsScreenViewModel = hiltViewModel()
@@ -86,6 +90,7 @@ fun TripsScreen(
                 currentTimeframe = viewModel.timeframe,
                 onTimeframeClick = { viewModel.updateTimeframe(it) },
                 onTripClick = onTripClick,
+                onCreateTripClick = onCreateTripClick,
                 modifier = modifier
             )
         }
@@ -98,6 +103,7 @@ fun TripsScreenContent(
     currentTimeframe: Timeframe,
     onTimeframeClick: (Timeframe) -> Unit,
     onTripClick: (String) -> Unit,
+    onCreateTripClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val tabItems = listOf(
@@ -106,77 +112,105 @@ fun TripsScreenContent(
         TabItem(timeframe = Timeframe.Pending, title = Timeframe.Pending.name, unSelectedIcon = Icons.Outlined.HourglassTop, selectedIcon = Icons.Filled.HourglassTop)
 
     )
-    Column(
-        verticalArrangement = Arrangement.spacedBy(32.dp),
-        modifier = modifier
-    ) {
-        val pagerState = rememberPagerState {
-            tabItems.size
-        }
-        LaunchedEffect(currentTimeframe) {
-            pagerState.animateScrollToPage(currentTimeframe.index)
-        }
-        LaunchedEffect(pagerState.currentPage, pagerState.isScrollInProgress) {
-            if (!pagerState.isScrollInProgress) {
-                onTimeframeClick(
-                    when (pagerState.currentPage) {
-                        Timeframe.Past.index -> Timeframe.Past
-                        Timeframe.Pending.index -> Timeframe.Pending
-                        else -> Timeframe.Current
-                    }
-                )
-            }
-        }
-        TabRow(selectedTabIndex = currentTimeframe.index) {
-            tabItems.forEach { item ->
-                Tab(
-                    selected = (item.timeframe.index == currentTimeframe.index),
-                    onClick = {
-                        onTimeframeClick(item.timeframe)
-                    },
-                    text = {
-                        Text(text = item.title, style = MaterialTheme.typography.labelLarge)
-                    },
-                    icon = {
-                        Icon(
-                            imageVector = if (item.timeframe.index == currentTimeframe.index) item.selectedIcon else item.unSelectedIcon,
-                            contentDescription = item.title
-                        )
-                    }
-                )
-            }
-        }
-        HorizontalPager(
-            state = pagerState,
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
+    Box(modifier = modifier) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(32.dp),
+            modifier = modifier
         ) {
-            when (uiState) {
-                is TripsScreenUiState.Error -> {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text(uiState.error.message, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error, textAlign = TextAlign.Center)
-                    }
+            val pagerState = rememberPagerState {
+                tabItems.size
+            }
+            LaunchedEffect(currentTimeframe) {
+                pagerState.animateScrollToPage(currentTimeframe.index)
+            }
+            LaunchedEffect(pagerState.currentPage, pagerState.isScrollInProgress) {
+                if (!pagerState.isScrollInProgress) {
+                    onTimeframeClick(
+                        when (pagerState.currentPage) {
+                            Timeframe.Past.index -> Timeframe.Past
+                            Timeframe.Pending.index -> Timeframe.Pending
+                            else -> Timeframe.Current
+                        }
+                    )
                 }
-                TripsScreenUiState.Loading -> {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Indicator(size = 48.dp)
-                    }
-                }
-                is TripsScreenUiState.Success -> {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        items(uiState.data.trips) { trip ->
-                            TripCard(
-                                trip = trip,
-                                onClick = onTripClick,
-                                modifier = Modifier.padding(12.dp)
+            }
+            TabRow(selectedTabIndex = currentTimeframe.index) {
+                tabItems.forEach { item ->
+                    Tab(
+                        selected = (item.timeframe.index == currentTimeframe.index),
+                        onClick = {
+                            onTimeframeClick(item.timeframe)
+                        },
+                        text = {
+                            Text(text = item.title, style = MaterialTheme.typography.labelLarge)
+                        },
+                        icon = {
+                            Icon(
+                                imageVector = if (item.timeframe.index == currentTimeframe.index) item.selectedIcon else item.unSelectedIcon,
+                                contentDescription = item.title
                             )
+                        }
+                    )
+                }
+            }
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+            ) {
+                when (uiState) {
+                    is TripsScreenUiState.Error -> {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                uiState.error.message,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.error,
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    }
+
+                    TripsScreenUiState.Loading -> {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Indicator(size = 48.dp)
+                        }
+                    }
+
+                    is TripsScreenUiState.Success -> {
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            items(uiState.data.trips) { trip ->
+                                TripCard(
+                                    trip = trip,
+                                    onClick = onTripClick,
+                                    modifier = Modifier.padding(12.dp)
+                                )
+                            }
                         }
                     }
                 }
             }
+        }
+        FloatingActionButton(
+            onClick = onCreateTripClick,
+            modifier = Modifier
+                .size(100.dp)
+                .align(Alignment.BottomEnd)
+                .padding(20.dp),
+            shape = CircleShape,
+        ) {
+            Icon(
+                imageVector = Icons.Default.Add,
+                "Add"
+            )
         }
     }
 }

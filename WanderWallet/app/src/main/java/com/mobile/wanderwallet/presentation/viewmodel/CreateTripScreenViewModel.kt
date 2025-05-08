@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mobile.wanderwallet.data.model.Result
 import com.mobile.wanderwallet.data.model.TripError
 import com.mobile.wanderwallet.data.model.TripPayload
 import com.mobile.wanderwallet.data.repository.WanderWalletApiRepository
@@ -32,8 +33,10 @@ class CreateTripScreenViewModel @Inject constructor(
         private set
     var budget by mutableStateOf("")
         private set
-    private var startDate by mutableStateOf("")
-    private var endDate by mutableStateOf("")
+    var startDate by mutableStateOf("")
+        private set
+    var endDate by mutableStateOf("")
+        private set
 
     fun updateName(value: String) {
         name = value
@@ -67,8 +70,15 @@ class CreateTripScreenViewModel @Inject constructor(
                     destination = destination,
                     budget = budget,
                     startDate = startDate,
-                    endDate = endDate
+                    endDate = endDate,
+                    tripImageUri = imageUri,
+                    contentResolver = contentResolver
                 )
+
+                createTripScreenUiState = when (response) {
+                    is Result.Error<TripError> -> CreateTripScreenUiState.Error(response.error, loggedOut = response.loggedOut)
+                    is Result.Success<TripPayload> -> CreateTripScreenUiState.Success(response.data)
+                }
             } catch (e: HttpException) {
                 createTripScreenUiState = CreateTripScreenUiState.Error(TripError(message = "An unexpected error occurred"))
             }

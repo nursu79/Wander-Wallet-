@@ -45,7 +45,6 @@ fun AddExpenseScreen(
                 onNameChange = viewModel::updateName,
                 amount = viewModel.amount,
                 onAmountChange = viewModel::updateAmount,
-                category = viewModel.category,
                 onCategoryChange = viewModel::updateCategory,
                 date = viewModel.date,
                 onDateChange = viewModel::updateDate,
@@ -65,7 +64,6 @@ fun AddExpenseScreenContent(
     onNameChange: (String) -> Unit,
     amount: String,
     onAmountChange: (String) -> Unit,
-    category: Category,
     onCategoryChange: (Category) -> Unit,
     date: String,
     onDateChange: (String) -> Unit,
@@ -107,14 +105,16 @@ fun AddExpenseScreenContent(
             )
             DatePickerField(
                 label = "Date",
-                onDateChange = onDateChange,
+                selectedDate = date,
+                onDateSelected = onDateChange,
                 errorMessage = if (uiState is AddExpenseScreenUiState.Error) uiState.error.date else null
             )
             FormField(
                 label = "Note",
                 placeholder = "Add your note",
                 value = notes ?: "",
-                onValueChange = onNotesChange
+                onValueChange = onNotesChange,
+                isFinal = true
             )
         }
         Column(
