@@ -1,5 +1,10 @@
 package com.mobile.wanderwallet.presentation.view
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -17,6 +22,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Add
@@ -42,7 +48,6 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mobile.wanderwallet.R
 import com.mobile.wanderwallet.presentation.components.RectangularButton
@@ -110,13 +115,25 @@ fun TripDetailsScreen(
                 }
             }
 
-            if (showDetails && selectedExpense != null) {
-                ExpenseDetailSection(
-                    expense = selectedExpense!!,
-                    onBack = { showDetails = false },
-                    onLoggedOut = onLoggedOut
-                )
-            } else {
+            AnimatedVisibility(
+                visible = showDetails && selectedExpense != null,
+                enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
+                exit = slideOutVertically(targetOffsetY = { it }) + fadeOut()
+            ) {
+                selectedExpense?.let { expense ->
+                    ExpenseDetailSection(
+                        expense = expense,
+                        onBack = { showDetails = false },
+                        onLoggedOut = onLoggedOut
+                    )
+                }
+            }
+
+            AnimatedVisibility(
+                visible = !showDetails || selectedExpense == null,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
                 Column(Modifier.padding(16.dp)) {
                     Text(
                         text = "Expenses",
@@ -162,16 +179,16 @@ fun ExpenseDetailSection(
             modifier = Modifier
                 .fillMaxSize()
                 .shadow(
-                    elevation = 24.dp,
-                    shape = MaterialTheme.shapes.medium,
-                    ambientColor = Color.Black.copy(alpha = 0.1f),
-                    spotColor = Color.Black.copy(alpha = 0.2f)
+                    elevation = 25.dp,
+                    shape = RoundedCornerShape(20.dp),
+                    ambientColor = Color.Black,
+                    spotColor = Color.Black
                 ),
             colors = CardDefaults.cardColors(
                 containerColor = Color.White
             ),
-            shape = MaterialTheme.shapes.medium,
-            elevation = CardDefaults.cardElevation(0.dp)
+            shape = RoundedCornerShape(20.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
         ) {
             Spacer(Modifier.height(8.dp))
             Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
@@ -222,84 +239,49 @@ fun ExpenseDetailSection(
 
             Card(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
+                    .fillMaxWidth(),
                 colors = CardDefaults.cardColors(
                     containerColor = Color.White
                 ),
                 elevation = CardDefaults.cardElevation(0.dp)
             ) {
-                Column(modifier = Modifier.padding(24.dp)) {
+                Column(Modifier.padding(horizontal = 24.dp)) {
                     ExpenseIcon(category = expense.category)
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
                     Column {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(8.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                        ) {
-                            Text(
-                                text = expense.category,
-                                modifier = Modifier.padding(bottom = 8.dp)
-                            )
-                            Text(
-                                text = (expense.amount * 0.3).toString() + "$"
-                            )
-                        }
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(8.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                        ) {
-                            Text(
-                                text = expense.category,
-                                modifier = Modifier.padding(bottom = 8.dp)
-                            )
-                            Text(
-                                text = (expense.amount * 0.3).toString() + "$"
-                            )
-                        }
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(8.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                        ) {
-                            Text(
-                                text = expense.category,
-                                modifier = Modifier.padding(bottom = 8.dp)
-                            )
-                            Text(
-                                text = (expense.amount * 0.3).toString() + "$"
-                            )
-                        }
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(8.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                        ) {
-                            Text(
-                                text = expense.category,
-                                modifier = Modifier.padding(bottom = 8.dp)
-                            )
-                            Text(
-                                text = (expense.amount * 0.3).toString() + "$"
-                            )
-                        }
-                        Spacer(modifier = Modifier.height(8.dp))
+                        ExpenseList(expense = expense)
                     }
                 }
             }
         }
+    }
+}
+
+@Composable
+fun ExpenseList(expense: Expense, count: Int = 4) {
+    LazyColumn(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        items(count) {
+            ExpenseRow(expense = expense)
+        }
+    }
+}
+
+@Composable
+fun ExpenseRow(expense: Expense) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+        Text(
+            text = expense.category,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+        Text(text = "%.2f$".format(expense.amount * 0.3))
     }
 }
 
@@ -332,7 +314,9 @@ fun ExpenseCard(expense: Expense, onClick: () -> Unit) {
             modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            Box(){
             ExpenseIcon(category = expense.category)
+                }
             Spacer(modifier = Modifier.width(16.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
