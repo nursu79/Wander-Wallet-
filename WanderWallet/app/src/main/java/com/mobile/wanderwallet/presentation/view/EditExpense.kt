@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import com.mobile.wanderwallet.presentation.components.DatePickerField
 import com.mobile.wanderwallet.presentation.components.FormField
 import com.mobile.wanderwallet.presentation.components.RectangularButton
+import com.mobile.wanderwallet.presentation.components.Dropdown
 
 
 @Composable
