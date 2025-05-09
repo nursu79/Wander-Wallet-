@@ -81,6 +81,7 @@ fun getScreenFromRoute(route: String?): MainContentScreen {
         route == MainContentScreen.TripsScreen.route -> MainContentScreen.TripsScreen
         route == MainContentScreen.CreateTripScreen.route -> MainContentScreen.CreateTripScreen
         (route?.startsWith("trips/") ?: false) -> MainContentScreen.TripDetailsScreen
+        (route?.startsWith("editTrip/") ?: false) -> MainContentScreen.EditTripScreen
         (route?.startsWith("addExpense/") ?: false) -> MainContentScreen.AddExpenseScreen
         else -> MainContentScreen.TripsScreen
     }
@@ -228,7 +229,7 @@ fun MainContentNavigation(
                         navController.navigate(MainContentScreen.EditTripScreen.createRoute(tripId))
                     },
                     onDeleteClick = {
-                        navController.navigate(MainContentScreen.TripsScreen) {
+                        navController.navigate(MainContentScreen.TripsScreen.route) {
                             popUpTo(MainContentScreen.TripDetailsScreen.createRoute(tripId)) {
                                 inclusive = true
                             }
@@ -250,6 +251,38 @@ fun MainContentNavigation(
                 CreateTripScreen(
                     onSuccess = {
                         navController.navigate(MainContentScreen.TripDetailsScreen.createRoute(it))
+                    },
+                    onCancel = {
+                        navController.navigate(MainContentScreen.TripsScreen) {
+                            popUpTo(MainContentScreen.CreateTripScreen.route) {
+                                inclusive = true
+                            }
+                        }
+                    },
+                    onLoggedOut = onLoggedOut
+                )
+            }
+
+            composable(
+                route = MainContentScreen.EditTripScreen.route,
+                arguments = listOf(navArgument("tripId") { type = NavType.StringType })
+            ) { backStackEnt ->
+                val tripId = backStackEnt.arguments?.getString("tripId") ?: ""
+
+                EditTripScreen(
+                    onSuccess = {
+                        navController.navigate(MainContentScreen.TripDetailsScreen.createRoute(tripId)) {
+                            popUpTo(MainContentScreen.EditTripScreen.createRoute(tripId)) {
+                                inclusive = true
+                            }
+                        }
+                    },
+                    onCancel = {
+                        navController.navigate(MainContentScreen.TripDetailsScreen.createRoute(tripId)) {
+                            popUpTo(MainContentScreen.EditTripScreen.createRoute(tripId)) {
+                                inclusive = true
+                            }
+                        }
                     },
                     onLoggedOut = onLoggedOut
                 )

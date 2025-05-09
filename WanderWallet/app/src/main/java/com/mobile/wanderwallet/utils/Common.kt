@@ -33,3 +33,8 @@ fun convertMillisToDate(millis: Long): String {
     val formatter = SimpleDateFormat("MM/dd/yyyy", Locale.getDefault())
     return formatter.format(millis)
 }
+
+fun convertDateToFormattedString(date: Date?): String? {
+    val formatter = SimpleDateFormat("MM/dd/yyyy", Locale.getDefault())
+    return date?.let { formatter.format(it) }
+}

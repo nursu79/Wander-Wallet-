@@ -386,4 +386,26 @@ export default class UserController {
             notifications
         });
     }
+
+    static async deleteNotification(req: Request, res: Response) {
+        const user = getUser(req);
+        const { id } = req.params;
+
+        try {
+            await prisma.notification.delete({
+                where: {
+                    id: id,
+                    userId: user?.id
+                }
+            });
+
+            return res.status(200).json({
+                message: "Notification was deleted successfully"
+            })
+        } catch (e) {
+            return res.status(404).json({
+                message: "Notification was not found"
+            });
+        }
+    }
 }

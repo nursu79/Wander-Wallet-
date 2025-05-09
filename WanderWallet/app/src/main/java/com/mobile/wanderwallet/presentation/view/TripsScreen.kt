@@ -184,15 +184,26 @@ fun TripsScreenContent(
                     }
 
                     is TripsScreenUiState.Success -> {
-                        LazyColumn(
-                            modifier = Modifier.fillMaxSize()
-                        ) {
-                            items(uiState.data.trips) { trip ->
-                                TripCard(
-                                    trip = trip,
-                                    onClick = onTripClick,
-                                    modifier = Modifier.padding(12.dp)
-                                )
+                        val trips = uiState.data.trips
+                        if (trips.isEmpty()) {
+                            Text(
+                                text = "No ${currentTimeframe.name} trips yet. Create one by clicking on the Add button",
+                                style = MaterialTheme.typography.labelLarge,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.padding(16.dp)
+                            )
+                        }
+                        else {
+                            LazyColumn(
+                                modifier = Modifier.fillMaxSize()
+                            ) {
+                                items(trips) { trip ->
+                                    TripCard(
+                                        trip = trip,
+                                        onClick = onTripClick,
+                                        modifier = Modifier.padding(12.dp)
+                                    )
+                                }
                             }
                         }
                     }

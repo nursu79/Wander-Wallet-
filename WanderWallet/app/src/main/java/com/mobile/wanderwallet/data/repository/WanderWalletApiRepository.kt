@@ -46,6 +46,8 @@ interface WanderWalletApiRepository {
 
     suspend fun getNotifications(retry: Boolean = true): Result<NotificationsPayload, MessageError>
 
+    suspend fun deleteNotifications(id: String, retry: Boolean = true): Result<MessagePayload, MessageError>
+
     suspend fun logoutUser(retry: Boolean = true): Result<MessagePayload, TokensError>
 
     // Trip
@@ -267,6 +269,39 @@ class NetworkWanderWalletApiRepository(
                     try {
                         refreshToken()
                         getNotifications(retry = false)
+                    } catch (e: HttpException) {
+                        Result.Error(MessageError("Please login and continue"), loggedOut = true)
+                    } catch (e: IOException) {
+                        Result.Error(MessageError("Check your internet connection or the API address"))
+                    }
+                } else {
+                    Result.Error(MessageError("Please login and continue"), loggedOut = true)
+                }
+            } else {
+                try {
+                    val errorBody = e.response()?.errorBody()
+                    val errorResponse = gson.fromJson(errorBody?.string(), MessageError::class.java)
+                    Result.Error(errorResponse, loggedOut = true)
+                } catch (e: Throwable) {
+                    Result.Error(MessageError("An unexpected error occurred"))
+                }
+            }
+        } catch (e: IOException) {
+            Result.Error(MessageError("Check your internet connection or the API address"))
+        }
+    }
+
+    override suspend fun deleteNotifications(id: String, retry: Boolean): Result<MessagePayload, MessageError> {
+        return try {
+            val response = wanderWalletApiService.deleteNotification(id)
+
+            Result.Success(response)
+        } catch (e: HttpException) {
+            if (e.code() == 401) {
+                if (retry) {
+                    try {
+                        refreshToken()
+                        deleteNotifications(id, retry = false)
                     } catch (e: HttpException) {
                         Result.Error(MessageError("Please login and continue"), loggedOut = true)
                     } catch (e: IOException) {

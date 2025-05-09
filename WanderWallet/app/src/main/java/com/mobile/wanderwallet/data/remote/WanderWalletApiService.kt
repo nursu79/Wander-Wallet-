@@ -55,8 +55,11 @@ interface WanderWalletApiService {
         @Part avatar: MultipartBody.Part? = null
     ): UserPayload
 
-    @GET
+    @GET("/notifications")
     suspend fun getNotifications(): NotificationsPayload
+
+    @DELETE("/notifications/{id}")
+    suspend fun deleteNotification(@Path("id") id: String): MessagePayload
 
     @POST("/logout")
     suspend fun logoutUser(@Body requestBody: RefreshTokenRequest): MessagePayload
@@ -92,7 +95,7 @@ interface WanderWalletApiService {
     suspend fun deleteTrip(@Path("id") id: String): MessagePayload
 
     @Multipart
-    @POST("/trips/{id}")
+    @PUT("/trips/{id}")
     suspend fun updateTrip(
         @Path("id") id: String,
         @Part("name") name: RequestBody,

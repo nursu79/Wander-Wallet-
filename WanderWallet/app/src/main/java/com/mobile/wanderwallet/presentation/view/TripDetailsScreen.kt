@@ -67,7 +67,8 @@ fun TripDetailsScreen(
         is TripDetailsScreenUiState.Error -> {
             if (uiState.loggedOut) {
                 onLoggedOut()
-            } else {
+            }
+            else {
                 Column(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -77,7 +78,12 @@ fun TripDetailsScreen(
                         verticalArrangement = Arrangement.spacedBy(32.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text(uiState.error.message, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error, textAlign = TextAlign.Center)
+                        Text(
+                            uiState.error.message,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.error,
+                            textAlign = TextAlign.Center
+                        )
                         RectangularButton(
                             onClick = { viewModel.getTripDetails() },
                         ) {
@@ -173,10 +179,8 @@ fun TripDetailsScreenContent(
                                 Text("Delete", style = MaterialTheme.typography.bodyMedium)
                             }
                         }
-                        if (deleteState is TripDeleteState.Success) {
-                            Text(deleteState.data.message, style = MaterialTheme.typography.bodySmall)
-                        } else if (deleteState is TripDeleteState.Error) {
-                            Text(deleteState.error.message, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error)
+                        if (deleteState is TripDeleteState.Error) {
+                            Text(deleteState.error.message, style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.error)
                         }
                     }
                 }
@@ -188,6 +192,14 @@ fun TripDetailsScreenContent(
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
                 Spacer(Modifier.height(8.dp))
+                if (tripDetails.expensesByCategory.isEmpty()) {
+                    Text(
+                        text = "No expenses yet. Add one by clicking on the add button",
+                        style = MaterialTheme.typography.labelLarge,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
                 ExpensesByCategoriesCardsSection(
                     expensesByCategories = tripDetails.expensesByCategory,
                     onCardClick = {

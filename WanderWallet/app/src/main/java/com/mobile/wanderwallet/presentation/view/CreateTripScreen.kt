@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -23,7 +22,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -53,6 +51,7 @@ import com.mobile.wanderwallet.presentation.viewmodel.CreateTripScreenViewModel
 @Composable
 fun CreateTripScreen(
     onSuccess: (String) -> Unit,
+    onCancel: () -> Unit,
     onLoggedOut: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: CreateTripScreenViewModel = hiltViewModel()
@@ -80,6 +79,7 @@ fun CreateTripScreen(
         endDate = viewModel.endDate,
         onEndDateChange = viewModel::updateEndDate,
         onSubmit = viewModel::createTrip,
+        onCancel = onCancel,
         modifier = modifier
     )
 }
@@ -98,6 +98,7 @@ fun CreateTripScreenContent(
     endDate: String,
     onEndDateChange: (String) -> Unit,
     onSubmit: (Uri?, ContentResolver?) -> Unit,
+    onCancel: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var imageUri by remember { mutableStateOf<Uri?>(null) }
@@ -133,7 +134,7 @@ fun CreateTripScreenContent(
                 )
             } else {
                 Image(
-                    painter = painterResource(R.drawable.ic_placeholder),
+                    painter = painterResource(R.drawable.default_tripimage),
                     contentDescription = "Trip Image Placeholder",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
@@ -208,11 +209,11 @@ fun CreateTripScreenContent(
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             RectangularButton(
-                onClick = { /* Cancel logic */ },
+                onClick = onCancel,
                 color = MaterialTheme.colorScheme.error,
                 modifier = Modifier.weight(1f)
             ) {
-                Text("Cancel")
+                Text("Cancel", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onError)
             }
             RectangularButton(
                 onClick = {
@@ -220,7 +221,7 @@ fun CreateTripScreenContent(
                 },
                 modifier = Modifier.weight(1f)
             ) {
-                Text("Create")
+                Text("Create", style = MaterialTheme.typography.bodyMedium)
             }
         }
     }

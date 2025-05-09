@@ -58,4 +58,13 @@ userRouter.get("/notifications",
     }
 )
 
+userRouter.delete("/notifications/:id",
+    (req, res, next) => {
+        authenticateToken(req, res, next);
+    },
+    (req, res) => {
+        UserController.deleteNotification(req, res);
+    }   
+)
+
 export default userRouter;
