@@ -82,6 +82,10 @@ dependencies {
     implementation(libs.material)
     kapt(libs.hilt.android.compiler)
     implementation(libs.hilt.navigation.compose)
+    //Vico Dependencies
+    implementation(libs.compose)
+    implementation(libs.core)
+    implementation(libs.compose.m3)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
