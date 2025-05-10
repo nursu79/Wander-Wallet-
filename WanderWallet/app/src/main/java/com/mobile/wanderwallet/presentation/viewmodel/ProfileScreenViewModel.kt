@@ -2,7 +2,6 @@ package com.mobile.wanderwallet.presentation.viewmodel
 
 import android.content.ContentResolver
 import android.net.Uri
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -70,9 +69,7 @@ class ProfileScreenViewModel @Inject constructor(
         viewModelScope.launch {
             profileScreenUiState = ProfileScreenUiState.GetLoading
             try {
-                val response = apiRepository.getProfile()
-
-                when (response) {
+                when (val response = apiRepository.getProfile()) {
                     is Result.Error<MessageError> -> ProfileScreenUiState.Error(UserError(message = response.error.message))
                     is Result.Success<UserPayload> -> {
                         val user = response.data.user
@@ -101,7 +98,6 @@ class ProfileScreenViewModel @Inject constructor(
                     imageUri,
                     contentResolver
                 )
-                Log.d("AppDebug", response.toString())
                 profileScreenUiState = when (response) {
                     is Result.Error<UserError> -> ProfileScreenUiState.Error(response.error, loggedOut = response.loggedOut)
                     is Result.Success<UserPayload> -> ProfileScreenUiState.Success(response.data)
@@ -116,9 +112,7 @@ class ProfileScreenViewModel @Inject constructor(
         viewModelScope.launch {
             profileScreenUiState = ProfileScreenUiState.LogoutLoading
             try {
-                val response = apiRepository.logoutUser()
-
-                when (response) {
+                when (val response = apiRepository.logoutUser()) {
                     is Result.Error<TokensError> -> {
                         profileScreenUiState = ProfileScreenUiState.Error(UserError(message = "An unexpected error occurred"), loggedOut = response.loggedOut)
                     }
