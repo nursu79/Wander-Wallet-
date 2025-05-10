@@ -52,6 +52,9 @@ interface WanderWalletApiService {
     @PUT("/profile")
     suspend fun updateProfile(
         @Part("username") username: RequestBody,
+        @Part("email") email: RequestBody,
+        @Part("newPassword") newPassword: RequestBody?,
+        @Part("oldPassword") oldPassword: RequestBody,
         @Part avatar: MultipartBody.Part? = null
     ): UserPayload
 

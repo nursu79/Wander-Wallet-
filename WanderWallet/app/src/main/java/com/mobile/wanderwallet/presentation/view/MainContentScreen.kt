@@ -85,6 +85,7 @@ fun getScreenFromRoute(route: String?): MainContentScreen {
         route == MainContentScreen.TripsScreen.route -> MainContentScreen.TripsScreen
         route == MainContentScreen.CreateTripScreen.route -> MainContentScreen.CreateTripScreen
         route == MainContentScreen.NotificationScreen.route -> MainContentScreen.NotificationScreen
+        route == MainContentScreen.ProfileScreen.route -> MainContentScreen.ProfileScreen
         (route?.startsWith("trips/") ?: false) -> MainContentScreen.TripDetailsScreen
         (route?.startsWith("editTrip/") ?: false) -> MainContentScreen.EditTripScreen
         (route?.startsWith("expenses/") ?: false) -> MainContentScreen.ExpenseDetailsScreen
@@ -157,6 +158,7 @@ fun MainContentScreenContent(
         is MainContentScreenUiState.Success -> {
             MainContentNavigation(
                 user = uiState.data.user,
+                getUser = getUser,
                 onLoggedOut = onLoggedOut,
                 modifier = modifier
             )
@@ -167,6 +169,7 @@ fun MainContentScreenContent(
 @Composable
 fun MainContentNavigation(
     user: User,
+    getUser: () -> Unit,
     onLoggedOut: () -> Unit,
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController()
@@ -362,6 +365,16 @@ fun MainContentNavigation(
                         navController.navigate(MainContentScreen.NotificationScreen.route) {
                             popUpTo(MainContentScreen.NotificationScreen.route) { inclusive = true }
                         }
+                    },
+                    onLoggedOut = onLoggedOut
+                )
+            }
+
+            composable(route = MainContentScreen.ProfileScreen.route) {
+                ProfileScreen(
+                    onUpdateSuccess = {
+                        getUser()
+                        navController.navigate(MainContentScreen.TripsScreen.route)
                     },
                     onLoggedOut = onLoggedOut
                 )

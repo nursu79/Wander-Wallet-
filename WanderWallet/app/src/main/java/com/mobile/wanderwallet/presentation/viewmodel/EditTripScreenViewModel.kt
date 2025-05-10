@@ -2,7 +2,6 @@ package com.mobile.wanderwallet.presentation.viewmodel
 
 import android.content.ContentResolver
 import android.net.Uri
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue

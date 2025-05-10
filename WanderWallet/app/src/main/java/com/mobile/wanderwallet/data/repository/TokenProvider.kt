@@ -10,6 +10,7 @@ interface TokenProvider {
     fun setAccessToken(token: String)
     fun getRefreshToken(): String?
     fun setRefreshToken(token: String)
+    fun clearTokens()
 }
 
 class SharedPrefsTokenProvider @Inject constructor(
@@ -30,6 +31,10 @@ class SharedPrefsTokenProvider @Inject constructor(
     }
 
     override fun setRefreshToken(token: String) {
-        prefs.edit() { putString("refresh_token", token) }
+        prefs.edit { putString("refresh_token", token) }
+    }
+
+    override fun clearTokens() {
+        prefs.edit { clear() }
     }
 }

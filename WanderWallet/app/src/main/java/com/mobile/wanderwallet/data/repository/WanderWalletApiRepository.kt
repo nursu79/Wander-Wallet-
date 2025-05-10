@@ -42,7 +42,7 @@ interface WanderWalletApiRepository {
 
     suspend fun getProfile(retry: Boolean = true): Result<UserPayload, MessageError>
 
-    suspend fun updateProfile(username: String, avatarUri: Uri? = null, contentResolver: ContentResolver? = null, retry: Boolean = true): Result<UserPayload, UserError>
+    suspend fun updateProfile(username: String, email: String, newPassword: String?, oldPassword: String, avatarUri: Uri? = null, contentResolver: ContentResolver? = null, retry: Boolean = true): Result<UserPayload, UserError>
 
     suspend fun getNotifications(retry: Boolean = true): Result<NotificationsPayload, MessageError>
 
@@ -212,8 +212,12 @@ class NetworkWanderWalletApiRepository(
         }
     }
 
-    override suspend fun updateProfile(username: String, avatarUri: Uri?, contentResolver: ContentResolver?, retry: Boolean): Result<UserPayload, UserError> {
+    override suspend fun updateProfile(username: String, email: String, newPassword: String?, oldPassword: String, avatarUri: Uri?, contentResolver: ContentResolver?, retry: Boolean): Result<UserPayload, UserError> {
         val usernamePart = username.toRequestBody("text/plain".toMediaType())
+        val emailPart = email.toRequestBody("text/plain".toMediaType())
+        val newPasswordPart = newPassword?.toRequestBody("text/plain".toMediaType())
+        val oldPasswordPart = oldPassword.toRequestBody("text/plain".toMediaType())
+
         var avatarPart: MultipartBody.Part? = null
 
         if (avatarUri != null && contentResolver != null) {
@@ -228,7 +232,13 @@ class NetworkWanderWalletApiRepository(
         }
 
         return try {
-            val response = wanderWalletApiService.updateProfile(usernamePart, avatarPart)
+            val response = wanderWalletApiService.updateProfile(
+                username = usernamePart,
+                email = emailPart,
+                newPassword = newPasswordPart,
+                oldPassword = oldPasswordPart,
+                avatarPart
+            )
 
             Result.Success(response)
         } catch (e: HttpException) {
@@ -236,7 +246,15 @@ class NetworkWanderWalletApiRepository(
                 if (retry) {
                     try {
                         refreshToken()
-                        updateProfile(username, avatarUri, contentResolver, retry = false)
+                        updateProfile(
+                            username,
+                            email,
+                            newPassword,
+                            oldPassword,
+                            avatarUri,
+                            contentResolver,
+                            retry = false
+                        )
                     } catch (e: HttpException) {
                         Result.Error(UserError(message = "Please login and continue"), loggedOut = true)
                     }
@@ -330,6 +348,7 @@ class NetworkWanderWalletApiRepository(
         return try {
             val response = wanderWalletApiService.logoutUser(refreshTokenRequest)
 
+            tokenProvider.clearTokens()
             Result.Success(response)
         } catch (e: HttpException) {
             if (e.code() == 401) {

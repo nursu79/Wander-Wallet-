@@ -248,11 +248,11 @@ export default class UserController {
 
     static async updateProfile(req: Request, res: Response) {
         const user = getUser(req);
-        const { username } = req.body || {};
+        const { username, email, newPassword, oldPassword } = req.body || {};
 
         const avatarUrl = req.file?.filename || null;
 
-        if (!username) {
+        if (!username || !email || !oldPassword) {
             if (avatarUrl) {
                 try {
                     fs.rm(path.join("public", "userAvatars", avatarUrl), (err) => {
@@ -269,8 +269,10 @@ export default class UserController {
                 }
             }
             return res.status(400).json({ 
-                username: "Username is required",
-             });
+                username: !username ? "Username is required" : undefined,
+                email: !email ? "Email is required" : undefined,
+                message: !oldPassword ? "Your Password is required" : undefined
+            });
         }
 
         const existingUser = await prisma.user.findUnique({
@@ -278,6 +280,57 @@ export default class UserController {
                 id: user?.id
             }
         });
+
+        const isPasswordValid = await bcrypt.compare(oldPassword, existingUser?.password || "")
+
+        if (!isPasswordValid) {
+            if (avatarUrl) {
+                try {
+                    fs.rm(path.join("public", "userAvatars", avatarUrl), (err) => {
+                        if (err) {
+                            return res.status(500).json({
+                                message: "An unexpected error occured"
+                            })
+                        }
+                    });
+                } catch (e) {
+                    return res.status(500).json({
+                        message: "An unexpected error occured"
+                    });
+                }
+            }
+            return res.status(400).json({
+                message: "Password is incorrect"
+            });
+        }
+
+        const emailInUse = await prisma.user.findUnique({
+            where: {
+                email: email
+            }
+        });
+
+        if (emailInUse && (email !== existingUser?.email)) {
+            if (avatarUrl) {
+                try {
+                    fs.rm(path.join("public", "userAvatars", avatarUrl), (err) => {
+                        if (err) {
+                            return res.status(500).json({
+                                message: "An unexpected error occured"
+                            })
+                        }
+                    });
+                } catch (e) {
+                    return res.status(500).json({
+                        message: "An unexpected error occured"
+                    });
+                }
+            }
+            return res.status(400).json({
+                email: "This email is already registered"
+            });
+        }
+
         const oldAvatarUrl = existingUser?.avatarUrl
 
         try {
@@ -289,7 +342,9 @@ export default class UserController {
                     password: true
                 },
                 data: {
-                    username,
+                    username: username,
+                    email: email,
+                    password: newPassword ? (await bcrypt.hash(newPassword, 10)) : existingUser?.password,
                     avatarUrl: avatarUrl || existingUser?.avatarUrl
                 }
             });
