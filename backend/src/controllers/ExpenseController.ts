@@ -70,7 +70,8 @@ export default class ExpenseController {
             await prisma.notification.create({
                 data: {
                     userId: user.id,
-                    tripId: trip.id
+                    tripId: trip.id,
+                    surplus: (tripExpenses._sum.amount - trip.budget)
                 }
             });
         }
@@ -236,13 +237,23 @@ export default class ExpenseController {
                 }
             });
     
-            if (user && tripExpenses._sum.amount && (tripExpenses._sum.amount > updatedExpense.trip.budget)) {
-                await prisma.notification.create({
-                    data: {
-                        userId: user.id,
-                        tripId: updatedExpense.trip.id
-                    }
-                });
+            if (user && tripExpenses._sum.amount) {
+                if (tripExpenses._sum.amount > updatedExpense.trip.budget) {
+                    await prisma.notification.create({
+                        data: {
+                            userId: user.id,
+                            tripId: updatedExpense.trip.id,
+                            surplus: (tripExpenses._sum.amount - updatedExpense.trip.budget)
+                        }
+                    });
+                } else {
+                    await prisma.notification.deleteMany({
+                        where: {
+                            userId: user.id,
+                            tripId: updatedExpense.trip.id
+                        }
+                    });
+                }
             }
 
             return res.status(200).json({

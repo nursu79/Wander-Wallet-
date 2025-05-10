@@ -213,12 +213,13 @@ fun SelectCategoryTextField(
     label: String,
     onItemSelected: (Category) -> Unit,
     modifier: Modifier = Modifier,
+    selectedCategory: Category? = Category.FOOD,
     options: Array<Category> = Category.entries.toTypedArray(),
     errorMessage: String? = null,
 ) {
     var expanded by remember { mutableStateOf(false) }
     var selectedOptionText by remember { mutableStateOf(
-        options.firstOrNull()?.name?.lowercase()?.replaceFirstChar { it.uppercase() } ?: ""
+        selectedCategory?.name?.lowercase()?.replaceFirstChar { it.uppercase() } ?: ""
     )}
 
     Column(

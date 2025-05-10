@@ -5,5 +5,6 @@ data class Notification(
     val userId: String,
     val user: User?,
     val tripId: String,
-    val trip: Trip?
+    val trip: Trip?,
+    val surplus: Float
 )

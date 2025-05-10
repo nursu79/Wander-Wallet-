@@ -16,6 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.QueryStats
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Home
@@ -64,18 +65,18 @@ sealed class MainContentScreen(val route: String, val title: String, val subStri
     data object CreateTripScreen: MainContentScreen(route = "createTrip", title = "Where to next?", subString = "Start planning for the trip!")
     data object ProfileScreen: MainContentScreen(route = "profile", title = "Your profile")
     data object SummaryScreen: MainContentScreen(route = "summary", title = "Summary")
-    data object NotificationScreen: MainContentScreen(route = "notification", title = "Your Notifications")
+    data object NotificationScreen: MainContentScreen(route = "notifications", title = "Your Notifications")
     data object EditTripScreen: MainContentScreen(route = "editTrip/{tripId}", title = "Edit Trip") {
         fun createRoute(id: String) = "editTrip/$id"
+    }
+    data object AddExpenseScreen: MainContentScreen(route = "addExpense/{tripId}", title = "Add Expense") {
+        fun createRoute(id: String) = "addExpense/$id"
     }
     data object ExpenseDetailsScreen: MainContentScreen(route = "expenses/{tripId}/{expenseId}", title = "Expense Details") {
         fun createRoute(tripId: String, expenseId: String) = "expenses/$tripId/$expenseId"
     }
-    data object EditExpenseScreen: MainContentScreen(route = "editExpense/{expenseId}", title = "Edit Expense") {
-        fun createRoute(id: String) = "editExpense/$id"
-    }
-    data object AddExpenseScreen: MainContentScreen(route = "addExpense/{tripId}", title = "Add Expense") {
-        fun createRoute(id: String) = "addExpense/$id"
+    data object EditExpenseScreen: MainContentScreen(route = "editExpense/{tripId}/{expenseId}", title = "Edit Expense") {
+        fun createRoute(tripId: String, expenseId: String) = "editExpense/$tripId/$expenseId"
     }
 }
 
@@ -83,10 +84,12 @@ fun getScreenFromRoute(route: String?): MainContentScreen {
     return when {
         route == MainContentScreen.TripsScreen.route -> MainContentScreen.TripsScreen
         route == MainContentScreen.CreateTripScreen.route -> MainContentScreen.CreateTripScreen
+        route == MainContentScreen.NotificationScreen.route -> MainContentScreen.NotificationScreen
         (route?.startsWith("trips/") ?: false) -> MainContentScreen.TripDetailsScreen
         (route?.startsWith("editTrip/") ?: false) -> MainContentScreen.EditTripScreen
         (route?.startsWith("expenses/") ?: false) -> MainContentScreen.ExpenseDetailsScreen
         (route?.startsWith("addExpense/") ?: false) -> MainContentScreen.AddExpenseScreen
+        (route?.startsWith("editExpense/") ?: false) -> MainContentScreen.EditExpenseScreen
         else -> MainContentScreen.TripsScreen
     }
 }
@@ -180,6 +183,7 @@ fun MainContentNavigation(
                 currentScreen = currentScreen,
                 canNavigateBack = (currentScreen !is MainContentScreen.TripsScreen && navController.previousBackStackEntry != null),
                 navigateUp = { navController.navigateUp() },
+                onNotificationsClick = { navController.navigate(MainContentScreen.NotificationScreen.route) },
                 modifier = Modifier
                     .height(160.dp)
             )
@@ -319,10 +323,45 @@ fun MainContentNavigation(
 
                 ExpenseDetailsScreen(
                     onEditClick = {
-                        navController.navigate(MainContentScreen.EditExpenseScreen.createRoute(expenseId))
+                        navController.navigate(MainContentScreen.EditExpenseScreen.createRoute(tripId, expenseId))
                     },
                     onDeleteClick = {
                         navController.navigate(MainContentScreen.TripDetailsScreen.createRoute(tripId))
+                    },
+                    onLoggedOut = onLoggedOut
+                )
+            }
+
+            composable(
+                route = MainContentScreen.EditExpenseScreen.route,
+                arguments = listOf(
+                    navArgument("tripId") { type = NavType.StringType },
+                    navArgument("expenseId") { type = NavType.StringType }
+                )
+            ) { backStackEnt ->
+                val tripId = backStackEnt.arguments?.getString("tripId") ?: ""
+                val expenseId = backStackEnt.arguments?.getString("expenseId") ?: ""
+
+                EditExpenseScreen(
+                    onSuccess = {
+                        navController.navigate(MainContentScreen.ExpenseDetailsScreen.createRoute(tripId, expenseId))
+                    },
+                    onCancel = {
+                        navController.navigateUp()
+                    },
+                    onLoggedOut = onLoggedOut
+                )
+            }
+
+            composable(route = MainContentScreen.NotificationScreen.route) {
+                NotificationsScreen(
+                    onViewDetailsClick = { tripId ->
+                        navController.navigate(MainContentScreen.TripDetailsScreen.createRoute(tripId))
+                    },
+                    onDismissClick = {
+                        navController.navigate(MainContentScreen.NotificationScreen.route) {
+                            popUpTo(MainContentScreen.NotificationScreen.route) { inclusive = true }
+                        }
                     },
                     onLoggedOut = onLoggedOut
                 )
@@ -337,6 +376,7 @@ fun MainContentAppBar(
     currentScreen: MainContentScreen,
     canNavigateBack: Boolean,
     navigateUp: () -> Unit,
+    onNotificationsClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Surface(
@@ -363,7 +403,8 @@ fun MainContentAppBar(
                             onClick = navigateUp,
                             colors = IconButtonDefaults.iconButtonColors(
                                 contentColor = MaterialTheme.colorScheme.onPrimary
-                            )
+                            ),
+                            modifier = Modifier.size(32.dp)
                         ) {
                             Icon(
                                 imageVector = Icons.Default.ChevronLeft,
@@ -400,19 +441,34 @@ fun MainContentAppBar(
                         .fillMaxHeight()
                         .weight(1f)
                 )
-                AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(baseUrl + "/userAvatars/" + user.avatarUrl)
-                        .crossfade(true)
-                        .build(),
-                    contentDescription = "User avatar",
-                    placeholder = painterResource(R.drawable.default_avatar),
-                    error = painterResource(R.drawable.default_avatar),
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .size(48.dp)
-                        .clip(CircleShape)
-                )
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    AsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(baseUrl + "/userAvatars/" + user.avatarUrl)
+                            .crossfade(true)
+                            .build(),
+                        contentDescription = "User avatar",
+                        placeholder = painterResource(R.drawable.default_avatar),
+                        error = painterResource(R.drawable.default_avatar),
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .size(48.dp)
+                            .clip(CircleShape)
+                    )
+                    IconButton(
+                        onClick = onNotificationsClick,
+                        modifier = Modifier
+                            .size(48.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Notifications,
+                            contentDescription = "Go to your notifications"
+                        )
+                    }
+                }
             }
         }
     }

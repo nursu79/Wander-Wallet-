@@ -2,7 +2,6 @@ package com.mobile.wanderwallet.presentation.view
 
 import android.content.ContentResolver
 import android.net.Uri
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -61,7 +60,6 @@ fun EditTripScreen(
 ) {
     val uiState = viewModel.editTripScreenUiState
 
-    Log.d("AppDebug", uiState.toString())
     if ((uiState is EditTripScreenUiState.Error) && uiState.loggedOut) {
         onLoggedOut()
     }
