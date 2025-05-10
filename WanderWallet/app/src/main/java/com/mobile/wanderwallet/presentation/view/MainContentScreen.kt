@@ -63,13 +63,16 @@ sealed class MainContentScreen(val route: String, val title: String, val subStri
     }
     data object CreateTripScreen: MainContentScreen(route = "createTrip", title = "Where to next?", subString = "Start planning for the trip!")
     data object ProfileScreen: MainContentScreen(route = "profile", title = "Your profile")
-    data object SummaryScreen: MainContentScreen(route = "summary", title = "Your Notfication")
-    data object NotificationScreen: MainContentScreen(route = "notification", title = "Summary")
+    data object SummaryScreen: MainContentScreen(route = "summary", title = "Summary")
+    data object NotificationScreen: MainContentScreen(route = "notification", title = "Your Notifications")
     data object EditTripScreen: MainContentScreen(route = "editTrip/{tripId}", title = "Edit Trip") {
         fun createRoute(id: String) = "editTrip/$id"
     }
-    data object ExpenseDetailsScreen: MainContentScreen(route = "expenses/{expenseId}", title = "Expense Details") {
-        fun createRoute(id: String) = "expenses/$id"
+    data object ExpenseDetailsScreen: MainContentScreen(route = "expenses/{tripId}/{expenseId}", title = "Expense Details") {
+        fun createRoute(tripId: String, expenseId: String) = "expenses/$tripId/$expenseId"
+    }
+    data object EditExpenseScreen: MainContentScreen(route = "editExpense/{expenseId}", title = "Edit Expense") {
+        fun createRoute(id: String) = "editExpense/$id"
     }
     data object AddExpenseScreen: MainContentScreen(route = "addExpense/{tripId}", title = "Add Expense") {
         fun createRoute(id: String) = "addExpense/$id"
@@ -82,6 +85,7 @@ fun getScreenFromRoute(route: String?): MainContentScreen {
         route == MainContentScreen.CreateTripScreen.route -> MainContentScreen.CreateTripScreen
         (route?.startsWith("trips/") ?: false) -> MainContentScreen.TripDetailsScreen
         (route?.startsWith("editTrip/") ?: false) -> MainContentScreen.EditTripScreen
+        (route?.startsWith("expenses/") ?: false) -> MainContentScreen.ExpenseDetailsScreen
         (route?.startsWith("addExpense/") ?: false) -> MainContentScreen.AddExpenseScreen
         else -> MainContentScreen.TripsScreen
     }
@@ -239,7 +243,7 @@ fun MainContentNavigation(
                         navController.navigate(MainContentScreen.AddExpenseScreen.createRoute(tripId))
                     },
                     onExpenseClick = {
-                        navController.navigate(MainContentScreen.ExpenseDetailsScreen.createRoute(it))
+                        navController.navigate(MainContentScreen.ExpenseDetailsScreen.createRoute(tripId, it))
                     },
                     onLoggedOut = onLoggedOut
                 )
@@ -305,6 +309,24 @@ fun MainContentNavigation(
                     onLoggedOut = onLoggedOut
                 )
             }
+
+            composable(
+                route = MainContentScreen.ExpenseDetailsScreen.route,
+                arguments = listOf(navArgument("tripId") { type = NavType.StringType }, navArgument("expenseId") { type = NavType.StringType })
+            ) { backStackEnt ->
+                val tripId = backStackEnt.arguments?.getString("tripId") ?: ""
+                val expenseId = backStackEnt.arguments?.getString("expenseId") ?: ""
+
+                ExpenseDetailsScreen(
+                    onEditClick = {
+                        navController.navigate(MainContentScreen.EditExpenseScreen.createRoute(expenseId))
+                    },
+                    onDeleteClick = {
+                        navController.navigate(MainContentScreen.TripDetailsScreen.createRoute(tripId))
+                    },
+                    onLoggedOut = onLoggedOut
+                )
+            }
         }
     }
 }
@@ -332,9 +354,9 @@ fun MainContentAppBar(
                 verticalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxHeight()
             ) {
-                Column(
-                    horizontalAlignment = Alignment.Start,
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     if (canNavigateBack) {
                         IconButton(
