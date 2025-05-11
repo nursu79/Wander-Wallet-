@@ -62,6 +62,12 @@ sealed class MainContentScreen(val route: String, val title: String, val subStri
     data object TripDetailsScreen: MainContentScreen(route = "trips/{tripId}", title = "Trip Details") {
         fun createRoute(id: String) = "trips/$id"
     }
+    object HomeScreenNewUser : MainContentScreen(
+        route = "homeNewUser",
+        title = "Welcome to Wander Wallet",
+        subString = "Start by planning your first trip!"
+    )
+
     data object CreateTripScreen: MainContentScreen(route = "createTrip", title = "Where to next?", subString = "Start planning for the trip!")
     data object ProfileScreen: MainContentScreen(route = "profile", title = "Your profile")
     data object SummaryScreen: MainContentScreen(route = "summary", title = "Summary")

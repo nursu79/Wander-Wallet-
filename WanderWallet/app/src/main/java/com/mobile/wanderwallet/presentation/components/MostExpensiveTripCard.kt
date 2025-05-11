@@ -7,7 +7,7 @@ import com.mobile.wanderwallet.data.model.TripPayload
 @Composable
 fun MostExpensiveTrip(
     trip: TripPayload,
-    onTripClick: (String)
+    onTripClick: (String),
     modifier: Modifier = Modifier
 ) {
 
