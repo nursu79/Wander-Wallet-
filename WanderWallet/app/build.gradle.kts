@@ -50,6 +50,7 @@ android {
     }
 }
 
+
 dependencies {
 
     implementation(libs.androidx.core.ktx)
@@ -86,9 +87,19 @@ dependencies {
     implementation(libs.compose)
     implementation(libs.core)
     implementation(libs.compose.m3)
-    // build.gradle.kts
+    // chart implementations
 
-    implementation("io.github.ehsannarmani:compose-charts:0.1.7")
+
+
+
+
+
+
+
+
+
+
+
 
 
 
