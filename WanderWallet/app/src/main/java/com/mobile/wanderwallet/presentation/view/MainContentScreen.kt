@@ -363,9 +363,13 @@ fun MainContentNavigation(
             }
 
             composable(route = MainContentScreen.NotificationScreen.route) {
-                NotificationsScreen(
+                com.mobile.wanderwallet.presentation.viewmodel.NotificationsScreen(
                     onViewDetailsClick = { tripId ->
-                        navController.navigate(MainContentScreen.TripDetailsScreen.createRoute(tripId))
+                        navController.navigate(
+                            MainContentScreen.TripDetailsScreen.createRoute(
+                                tripId
+                            )
+                        )
                     },
                     onDismissClick = {
                         navController.navigate(MainContentScreen.NotificationScreen.route) {

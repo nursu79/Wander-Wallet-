@@ -1,4 +1,4 @@
-package com.mobile.wanderwallet.presentation.view
+package com.mobile.wanderwallet.presentation.viewmodel
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box

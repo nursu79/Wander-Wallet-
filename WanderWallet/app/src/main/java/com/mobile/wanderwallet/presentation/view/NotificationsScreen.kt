@@ -69,7 +69,7 @@ fun NotificationsScreen(
             }
         }
         is NotificationsScreenUiState.Success -> {
-            NotificationsScreenContent(
+            com.mobile.wanderwallet.presentation.viewmodel.NotificationsScreenContent(
                 notifications = uiState.data.notifications,
                 deleteState = viewModel.deleteNotificationState,
                 onViewDetailsClick = onViewDetailsClick,
