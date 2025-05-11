@@ -9,9 +9,6 @@ export default class StatsController {
             where: {
                 trip: {
                     userId: user?.id,
-                    startDate: {
-                        lt: new Date()
-                    }
                 }
             },
             _sum: {
@@ -22,9 +19,6 @@ export default class StatsController {
         const totalBudget = await prisma.trip.aggregate({
             where: {
                 userId: user?.id,
-                startDate: {
-                    lt: new Date()
-                }
             },
             _sum: {
                 budget: true
@@ -45,9 +39,6 @@ export default class StatsController {
             where: {
                 trip: {
                     userId: user?.id,
-                    startDate: {
-                        lte: new Date()
-                    }
                 }
             },
             _avg: {
@@ -65,9 +56,6 @@ export default class StatsController {
         const allTrips = await prisma.trip.findMany({
             where: {
                 userId: user?.id,
-                startDate: {
-                    lte: new Date()
-                }
             },
             include: {
                 expenses: true
@@ -98,9 +86,6 @@ export default class StatsController {
             where: {
                 trip: {
                     userId: user?.id,
-                    startDate: {
-                        lte: new Date()
-                    }
                 }
             },
             _sum: {
@@ -168,9 +153,6 @@ export default class StatsController {
         const allTrips = await prisma.trip.findMany({
             where: {
                 userId: user?.id,
-                startDate: {
-                    lte: new Date()
-                }
             },
             select: {
                 id: true,
@@ -223,7 +205,8 @@ export default class StatsController {
             },
             select: {
                 name: true,
-                id: true
+                id: true,
+                budget: true
             }
         });
 
@@ -260,7 +243,8 @@ export default class StatsController {
             },
             select: {
                 name: true,
-                id: true
+                id: true,
+                budget: true
             }
         });
 
