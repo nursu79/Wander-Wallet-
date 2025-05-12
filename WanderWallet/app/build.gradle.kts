@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId = "com.mobile.wanderwallet"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -31,11 +31,11 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            buildConfigField("String", "BASE_URL", "\"http://192.168.55.68:3000\"")
+            buildConfigField("String", "BASE_URL", "\"http://192.168.137.68:3000\"")
         }
 
         debug {
-            buildConfigField("String", "BASE_URL", "\"http://192.168.55.68:3000\"")
+            buildConfigField("String", "BASE_URL", "\"http://192.168.137.68:3000\"")
         }
     }
     compileOptions {
@@ -82,16 +82,9 @@ dependencies {
     implementation(libs.material)
     kapt(libs.hilt.android.compiler)
     implementation(libs.hilt.navigation.compose)
-    //Vico Dependencies
-    implementation(libs.compose)
-    implementation(libs.core)
-    implementation(libs.compose.m3)
-    // build.gradle.kts
 
-    implementation("io.github.ehsannarmani:compose-charts:0.1.7")
-
-
-
+    // Charts
+    implementation("co.yml:ycharts:2.1.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

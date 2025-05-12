@@ -86,6 +86,7 @@ fun getScreenFromRoute(route: String?): MainContentScreen {
         route == MainContentScreen.CreateTripScreen.route -> MainContentScreen.CreateTripScreen
         route == MainContentScreen.NotificationScreen.route -> MainContentScreen.NotificationScreen
         route == MainContentScreen.ProfileScreen.route -> MainContentScreen.ProfileScreen
+        route == MainContentScreen.SummaryScreen.route -> MainContentScreen.SummaryScreen
         (route?.startsWith("trips/") ?: false) -> MainContentScreen.TripDetailsScreen
         (route?.startsWith("editTrip/") ?: false) -> MainContentScreen.EditTripScreen
         (route?.startsWith("expenses/") ?: false) -> MainContentScreen.ExpenseDetailsScreen
@@ -375,6 +376,15 @@ fun MainContentNavigation(
                     onUpdateSuccess = {
                         getUser()
                         navController.navigate(MainContentScreen.TripsScreen.route)
+                    },
+                    onLoggedOut = onLoggedOut
+                )
+            }
+
+            composable(route = MainContentScreen.SummaryScreen.route) {
+                SummaryScreen(
+                    onTripClick = { tripId ->
+                        navController.navigate(MainContentScreen.TripDetailsScreen.createRoute(tripId))
                     },
                     onLoggedOut = onLoggedOut
                 )

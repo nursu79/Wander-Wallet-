@@ -52,7 +52,7 @@ fun AvgSpendingCard(
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
-                    text = "₱ ${String.format(Locale.US, "%.2f", avgPerTrip)}",
+                    text = "$${String.format(Locale.US, "%.2f", avgPerTrip)}",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.primary
                 )
@@ -68,7 +68,7 @@ fun AvgSpendingCard(
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
-                    text = "₱ ${String.format(Locale.US, "%.2f", avgPerDay)}",
+                    text = "$${String.format(Locale.US, "%.2f", avgPerDay)}",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.primary
                 )
@@ -77,13 +77,13 @@ fun AvgSpendingCard(
     }
 }
 
-//@Preview(showBackground = true)
-//@Composable
-//fun AvgSpendingCardPreview() {
-//    WanderWalletTheme {
-//        AvgSpendingCard(
-//            avgPerTrip = 2500.75f,
-//            avgPerDay = 180.40f
-//        )
-//    }
-//}
+@Preview(showBackground = true)
+@Composable
+fun AvgSpendingCardPreview() {
+    WanderWalletTheme {
+        AvgSpendingCard(
+            avgPerTrip = 2500.75f,
+            avgPerDay = 180.40f
+        )
+    }
+}
