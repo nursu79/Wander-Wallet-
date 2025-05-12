@@ -62,12 +62,6 @@ sealed class MainContentScreen(val route: String, val title: String, val subStri
     data object TripDetailsScreen: MainContentScreen(route = "trips/{tripId}", title = "Trip Details") {
         fun createRoute(id: String) = "trips/$id"
     }
-    object HomeScreenNewUser : MainContentScreen(
-        route = "homeNewUser",
-        title = "Welcome to Wander Wallet",
-        subString = "Start by planning your first trip!"
-    )
-
     data object CreateTripScreen: MainContentScreen(route = "createTrip", title = "Where to next?", subString = "Start planning for the trip!")
     data object ProfileScreen: MainContentScreen(route = "profile", title = "Your profile")
     data object SummaryScreen: MainContentScreen(route = "summary", title = "Summary")
@@ -92,6 +86,7 @@ fun getScreenFromRoute(route: String?): MainContentScreen {
         route == MainContentScreen.CreateTripScreen.route -> MainContentScreen.CreateTripScreen
         route == MainContentScreen.NotificationScreen.route -> MainContentScreen.NotificationScreen
         route == MainContentScreen.ProfileScreen.route -> MainContentScreen.ProfileScreen
+        route == MainContentScreen.SummaryScreen.route -> MainContentScreen.SummaryScreen
         (route?.startsWith("trips/") ?: false) -> MainContentScreen.TripDetailsScreen
         (route?.startsWith("editTrip/") ?: false) -> MainContentScreen.EditTripScreen
         (route?.startsWith("expenses/") ?: false) -> MainContentScreen.ExpenseDetailsScreen
@@ -363,13 +358,9 @@ fun MainContentNavigation(
             }
 
             composable(route = MainContentScreen.NotificationScreen.route) {
-                com.mobile.wanderwallet.presentation.viewmodel.NotificationsScreen(
+                NotificationsScreen(
                     onViewDetailsClick = { tripId ->
-                        navController.navigate(
-                            MainContentScreen.TripDetailsScreen.createRoute(
-                                tripId
-                            )
-                        )
+                        navController.navigate(MainContentScreen.TripDetailsScreen.createRoute(tripId))
                     },
                     onDismissClick = {
                         navController.navigate(MainContentScreen.NotificationScreen.route) {
@@ -385,6 +376,15 @@ fun MainContentNavigation(
                     onUpdateSuccess = {
                         getUser()
                         navController.navigate(MainContentScreen.TripsScreen.route)
+                    },
+                    onLoggedOut = onLoggedOut
+                )
+            }
+
+            composable(route = MainContentScreen.SummaryScreen.route) {
+                SummaryScreen(
+                    onTripClick = { tripId ->
+                        navController.navigate(MainContentScreen.TripDetailsScreen.createRoute(tripId))
                     },
                     onLoggedOut = onLoggedOut
                 )
