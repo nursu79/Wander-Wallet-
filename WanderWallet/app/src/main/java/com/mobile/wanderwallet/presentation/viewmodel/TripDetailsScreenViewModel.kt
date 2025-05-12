@@ -34,7 +34,7 @@ class TripDetailsScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val apiRepository: WanderWalletApiRepository,
 
-): ViewModel() {
+    ): ViewModel() {
     var tripDetailsScreenUiState: TripDetailsScreenUiState by mutableStateOf(TripDetailsScreenUiState.Loading)
     var tripDeleteState: TripDeleteState by mutableStateOf(TripDeleteState.Waiting)
     private val tripId = savedStateHandle.get<String>("tripId") ?: ""

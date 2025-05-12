@@ -280,6 +280,9 @@ fun ProfileScreenContent(
             ) {
                 Card(
                     elevation = CardDefaults.cardElevation(8.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surface
+                    ),
                     modifier = Modifier
                         .padding(20.dp)
                 ) {
